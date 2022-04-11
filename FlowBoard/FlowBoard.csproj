@@ -129,9 +129,10 @@
     <Compile Include="Controls\TextControl.xaml.cs">
       <DependentUpon>TextControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ToolbarControl.xaml.cs">
-      <DependentUpon>ToolbarControl.xaml</DependentUpon>
+    <Compile Include="Controls\EraserControl.xaml.cs">
+      <DependentUpon>EraserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\EraserHelpers.cs" />
     <Compile Include="Helpers\Exceptionhelper.cs" />
     <Compile Include="Helpers\UIHelpers.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -217,7 +218,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ToolbarControl.xaml">
+    <Page Include="Controls\EraserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
