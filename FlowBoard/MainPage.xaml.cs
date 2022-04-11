@@ -55,12 +55,10 @@ namespace FlowBoard
             if (e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
             {
                 AppTitle.Foreground = inactiveForegroundBrush;
-                SavedTitle.Foreground = inactiveForegroundBrush;
             }
             else
             {
                 AppTitle.Foreground = defaultForegroundBrush;
-                SavedTitle.Foreground = defaultForegroundBrush;
             }
         }
 

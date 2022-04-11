@@ -95,8 +95,8 @@ namespace FlowBoard.Controls
 
         private void UnprocessedInput_PointerPressed(InkUnprocessedInput sender, PointerEventArgs args)
         {
-            TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelpers.EraserWidth;
-            TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelpers.EraserWidth;
+            TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth;
+            TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth;
             EraserVisibility = Visibility.Visible;
         }
 
@@ -104,41 +104,41 @@ namespace FlowBoard.Controls
     
         private void UnprocessedInput_PointerMoved(InkUnprocessedInput sender, PointerEventArgs args)
         {
-            TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelpers.EraserWidth;
-            TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelpers.EraserWidth;
+            TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth;
+            TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth;
 
             Point p1 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X - 0.5 * EraserHelpers.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelpers.EraserWidth,
+                X = args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth,
+                Y = args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p2 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X + 0.5 * EraserHelpers.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelpers.EraserWidth,
+                X = args.CurrentPoint.RawPosition.X + 0.5 * EraserHelper.EraserWidth,
+                Y = args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p3 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X + 0.5 * EraserHelpers.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y + 0.5 * EraserHelpers.EraserWidth,
+                X = args.CurrentPoint.RawPosition.X + 0.5 * EraserHelper.EraserWidth,
+                Y = args.CurrentPoint.RawPosition.Y + 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p4 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X - 0.5 * EraserHelpers.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y + 0.5 * EraserHelpers.EraserWidth,
+                X = args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth,
+                Y = args.CurrentPoint.RawPosition.Y + 0.5 * EraserHelper.EraserWidth,
             };
 
             inkCanvas.InkPresenter.StrokeContainer.SelectWithLine(p1, p2);
-            EraserHelpers.ErasePoints(args, inkCanvas);
+            EraserHelper.ErasePoints(args, inkCanvas);
             inkCanvas.InkPresenter.StrokeContainer.SelectWithLine(p2, p3);
-            EraserHelpers.ErasePoints(args, inkCanvas);
+            EraserHelper.ErasePoints(args, inkCanvas);
             inkCanvas.InkPresenter.StrokeContainer.SelectWithLine(p3, p4);
-            EraserHelpers.ErasePoints(args, inkCanvas);
+            EraserHelper.ErasePoints(args, inkCanvas);
             inkCanvas.InkPresenter.StrokeContainer.SelectWithLine(p4, p1);
-            EraserHelpers.ErasePoints(args, inkCanvas);
+            EraserHelper.ErasePoints(args, inkCanvas);
         }
 
         private void StrokeEraser_Checked(object sender, RoutedEventArgs e)

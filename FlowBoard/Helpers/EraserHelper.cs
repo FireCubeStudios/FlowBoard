@@ -7,10 +7,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace FlowBoard.Helpers
 {
-    public class EraserHelpers
+    public class EraserHelper
     {
         //Eraser Properties
-        public static int EraserWidth = 4;
+        public static int EraserWidth = 16;
 
         //Points on Cubic Bezier Curve siehe https://www.cubic.org/docs/bezier.htm
         public static Point lerp(Point a, Point b, float t)

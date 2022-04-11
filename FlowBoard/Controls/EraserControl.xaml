@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FlowBoard.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:FlowBoard.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:icons="using:Fluent.Icons" xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
@@ -499,13 +500,29 @@
         </StackPanel>
         <AppBarSeparator/>
         <StackPanel>
-            <ToggleButton x:Name="PointEraser" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
+            <Grid>
+                <ToggleButton x:Name="PointEraser" Margin="4" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
                 <icons:FluentSymbolIcon Symbol="EraserSmall24" RenderTransformOrigin="0.5, 0.5">
                     <icons:FluentSymbolIcon.RenderTransform>
                         <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>
                     </icons:FluentSymbolIcon.RenderTransform>
                 </icons:FluentSymbolIcon>
             </ToggleButton>
+                <Button Style="{ThemeResource ChevronButton}" HorizontalAlignment="Right" Canvas.ZIndex="3" Padding="0, 8, 0, 8" Height="32" Width="16" Margin="0, 0, 4, 0">
+                    <icons:FluentSymbolIcon Symbol="ChevronRight12"/>
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBlock FontWeight="SemiBold" Text="Eraser Width:"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Slider x:Name="EraserWidthSlider" x:FieldModifier="Public" Style="{ThemeResource GlowSlider}" VerticalAlignment="Center" Minimum="4" Maximum="100" Value="{x:Bind helpers:EraserHelper.EraserWidth, Mode=TwoWay}" Width="200"/>
+                                    <TextBlock FontSize="16" Margin="8, 0, 0, 0" VerticalAlignment="Center" Text="{x:Bind EraserWidthSlider.Value,Mode=OneWay}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
             <ToggleButton x:Name="StrokeEraser" Unchecked="StrokeEraser_UnChecked" Checked="StrokeEraser_Checked">
                 <icons:FluentSymbolIcon Symbol="Eraser20"/>
             </ToggleButton>

@@ -32,16 +32,16 @@ namespace FlowBoard.Controls
 
         public InputTools() => this.InitializeComponent();
 
-        private void PenToggle_Checked(object sender, RoutedEventArgs e) => Exceptionhelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes |= CoreInputDeviceTypes.Pen);
+        private void PenToggle_Checked(object sender, RoutedEventArgs e) => ExceptionHelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes |= CoreInputDeviceTypes.Pen);
 
-        private void PenToggle_UnChecked(object sender, RoutedEventArgs e) => Exceptionhelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes &= ~CoreInputDeviceTypes.Pen);
+        private void PenToggle_UnChecked(object sender, RoutedEventArgs e) => ExceptionHelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes &= ~CoreInputDeviceTypes.Pen);
 
-        private void CursorToggle_Checked(object sender, RoutedEventArgs e) => Exceptionhelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes |= CoreInputDeviceTypes.Mouse);
+        private void CursorToggle_Checked(object sender, RoutedEventArgs e) => ExceptionHelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes |= CoreInputDeviceTypes.Mouse);
 
-        private void CursorToggle_UnChecked(object sender, RoutedEventArgs e) => Exceptionhelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes &= ~CoreInputDeviceTypes.Mouse);
+        private void CursorToggle_UnChecked(object sender, RoutedEventArgs e) => ExceptionHelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes &= ~CoreInputDeviceTypes.Mouse);
 
-        private void TouchToggle_Checked(object sender, RoutedEventArgs e) => Exceptionhelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes |= CoreInputDeviceTypes.Touch);
+        private void TouchToggle_Checked(object sender, RoutedEventArgs e) => ExceptionHelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes |= CoreInputDeviceTypes.Touch);
 
-        private void TouchToggle_UnChecked(object sender, RoutedEventArgs e) => Exceptionhelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes &= ~CoreInputDeviceTypes.Touch);
+        private void TouchToggle_UnChecked(object sender, RoutedEventArgs e) => ExceptionHelper.CoalesceException(() => inkCanvas.InkPresenter.InputDeviceTypes &= ~CoreInputDeviceTypes.Touch);
     }
 }

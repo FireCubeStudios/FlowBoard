@@ -132,9 +132,9 @@
     <Compile Include="Controls\EraserControl.xaml.cs">
       <DependentUpon>EraserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\EraserHelpers.cs" />
-    <Compile Include="Helpers\Exceptionhelper.cs" />
-    <Compile Include="Helpers\UIHelpers.cs" />
+    <Compile Include="Helpers\EraserHelper.cs" />
+    <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

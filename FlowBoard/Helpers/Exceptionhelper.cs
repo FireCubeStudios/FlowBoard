@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FlowBoard.Helpers
 {
-    public class Exceptionhelper
+    public class ExceptionHelper
     {
         public static T CoalesceException<T>(Func<T> func, T defaultValue = default(T))
         {
