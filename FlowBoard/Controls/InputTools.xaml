@@ -1,0 +1,21 @@
+﻿<UserControl
+    x:Class="FlowBoard.Controls.InputTools"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:icons="using:Fluent.Icons"
+    mc:Ignorable="d">
+    <StackPanel Orientation="Horizontal">
+        <ToggleButton x:Name="Touch" Foreground="{ThemeResource HvidSortBrush}" Unchecked="TouchToggle_UnChecked" Checked="TouchToggle_Checked">
+            <icons:FluentSymbolIcon Symbol="HandLeft20" Margin="0, 0, 1, 0"/>
+        </ToggleButton>
+        <ToggleButton x:Name="Cursor" Unchecked="CursorToggle_UnChecked" Checked="CursorToggle_Checked">
+            <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="Cursor20"/>
+        </ToggleButton>
+        <ToggleButton x:Name="Pen" Unchecked="PenToggle_UnChecked" Checked="PenToggle_Checked" IsChecked="True">
+            <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="InkStroke20"/>
+        </ToggleButton>
+    </StackPanel>
+</UserControl>

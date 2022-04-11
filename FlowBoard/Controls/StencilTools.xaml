@@ -1,0 +1,19 @@
+﻿<UserControl
+    x:Class="FlowBoard.Controls.StencilTools"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:icons="using:Fluent.Icons"
+    mc:Ignorable="d"
+    Loaded="StencilTools_Loaded">
+    <StackPanel>
+        <ToggleButton x:Name="RulerToggle" Unchecked="RulerToggle_Checked" Checked="RulerToggle_Checked">
+            <icons:FluentSymbolIcon Symbol="Ruler20" Margin="0, 0, 2, 0"/>
+        </ToggleButton>
+        <ToggleButton x:Name="ProtractorToggle" Unchecked="ProtractorToggle_Checked" Checked="ProtractorToggle_Checked" Width="44">
+            <FontIcon FontFamily="Segoe MDL2 Assets" Foreground="{ThemeResource HvidSortBrush}" FontSize="16" Glyph="&#xF0B4;" Margin="1, 0, 0, 0"/>
+        </ToggleButton>
+    </StackPanel>
+</UserControl>
