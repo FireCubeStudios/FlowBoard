@@ -13,7 +13,7 @@
             <icons:FluentSymbolIcon Symbol="Ruler20" Margin="0, 0, 2, 0"/>
         </ToggleButton>
         <ToggleButton x:Name="ProtractorToggle" Unchecked="ProtractorToggle_Checked" Checked="ProtractorToggle_Checked" Width="44">
-            <FontIcon FontFamily="Segoe MDL2 Assets" Foreground="{ThemeResource HvidSortBrush}" FontSize="16" Glyph="&#xF0B4;" Margin="1, 0, 0, 0"/>
+            <FontIcon FontFamily="Segoe MDL2 Assets" Foreground="{ThemeResource HvidSortBrush}" FontSize="16" Glyph="&#xF0B4;" Margin="1, 1, 0, 0"/>
         </ToggleButton>
     </StackPanel>
 </UserControl>

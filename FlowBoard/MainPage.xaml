@@ -79,6 +79,7 @@
                             <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
                         </Style>
                     </Grid.Resources>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto">
                     <StackPanel VerticalAlignment="Center" Padding="4" CornerRadius="8" Orientation="Horizontal">
                         <StackPanel.Background>
                             <media:BackdropBlurBrush Amount="240"/>
@@ -91,20 +92,13 @@
                                 <icons:FluentSymbolIcon Symbol="ArrowRedo20"/>
                             </Button>
                         </StackPanel>
-                        <AppBarSeparator/>
+                            <AppBarSeparator/>
+                            <UserControls:PenControl x:Name="Pen" IsSelected="True" PropertyChanged="Pen_PropertyChanged"/>
+                            <AppBarSeparator/>
                         <UserControls:EraserControl x:Name="EraserButtons" inkCanvas="{x:Bind inkCanvas, Mode=OneWay}"/>
                         <UserControls:StencilTools inkCanvas="{x:Bind inkCanvas, Mode=OneWay}"/>
-                        <AppBarSeparator/>
-                        <StackPanel>
-                            <Button>
-                                <icons:FluentSymbolIcon Symbol="Image20"/>
-                            </Button>
-                            <Button>
-                                <icons:FluentSymbolIcon Symbol="Text20"/>
-                            </Button>
-                        </StackPanel>
-                        <AppBarSeparator/>
-                        <StackPanel Orientation="Horizontal">
+                            <AppBarSeparator/>
+                            <StackPanel Orientation="Horizontal">
                             <ToggleButton Style="{ThemeResource ToolbarToggleButton}">
                                 <StackPanel>
                                     <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="SelectObject24"/>
@@ -158,6 +152,7 @@
                             <Button Style="{ThemeResource SettingsToolbarButton}" Margin="4" Width="44"/>
                         </StackPanel>
                     </StackPanel>
+                    </ScrollViewer>
                 </Grid>
             </toolkit:DropShadowPanel>
         </Grid>

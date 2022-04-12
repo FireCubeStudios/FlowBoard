@@ -36,12 +36,7 @@ namespace FlowBoard
             inkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
             CanvasSizeService.Initialize(inkCanvas);
             WindowService.Initialize(AppTitleBar);
-            InkDrawingAttributes inkDrawingAttributes = new InkDrawingAttributes
-            {
-                Color = Colors.White
-            };
-            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(inkDrawingAttributes);
-
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(Pen.DrawingAttributes);
             //Register a handler for when the window changes focus
             Window.Current.Activated += Current_Activated;
         }
@@ -66,6 +61,11 @@ namespace FlowBoard
         {
             inkCanvas.Height = (e.NewSize.Height < inkCanvas.Height) ? inkCanvas.Height : e.NewSize.Height;
             inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
+        }
+
+        private void Pen_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(Pen.DrawingAttributes);
         }
     }
 }

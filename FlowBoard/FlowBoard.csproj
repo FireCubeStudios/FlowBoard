@@ -12,7 +12,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -123,6 +123,9 @@
     <Compile Include="Controls\InputTools.xaml.cs">
       <DependentUpon>InputTools.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PenControl.xaml.cs">
+      <DependentUpon>PenControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\StencilTools.xaml.cs">
       <DependentUpon>StencilTools.xaml</DependentUpon>
     </Compile>
@@ -132,6 +135,9 @@
     <Compile Include="Controls\EraserControl.xaml.cs">
       <DependentUpon>EraserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanInverter.cs" />
+    <Compile Include="Converters\SizeToDoubleConverter.cs" />
+    <Compile Include="Converters\TipToIndexConverter.cs" />
     <Compile Include="Helpers\EraserHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
@@ -209,6 +215,10 @@
     <Page Include="Controls\InputTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PenControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\StencilTools.xaml">
       <SubType>Designer</SubType>
