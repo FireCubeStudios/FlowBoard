@@ -20,8 +20,8 @@
                 <Button Style="{ThemeResource ChevronButton}" HorizontalAlignment="Right" Canvas.ZIndex="3" Padding="0, 8, 0, 8" Height="32" Width="16" Margin="0, 0, 4, 0">
                     <icons:FluentSymbolIcon Symbol="ChevronRight12"/>
                     <Button.Flyout>
-                        <Flyout  FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
-                            <StackPanel>
+                        <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
+                            <StackPanel Margin="12">
                                 <TextBlock FontWeight="SemiBold" Text="Eraser Width:"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Slider x:Name="EraserWidthSlider" x:FieldModifier="Public" Style="{ThemeResource GlowSlider}" VerticalAlignment="Center" Minimum="4" Maximum="100" Value="{x:Bind helpers:EraserHelper.EraserWidth, Mode=TwoWay}" Width="200"/>

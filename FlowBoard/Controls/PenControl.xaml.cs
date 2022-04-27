@@ -39,46 +39,32 @@ namespace FlowBoard.Controls
         public static readonly DependencyProperty DrawingAttributesProperty =
                    DependencyProperty.Register("DrawingAttributes", typeof(InkDrawingAttributes), typeof(PenControl), null);
 
-        public bool IsSelected
-        {
-            get { return (bool)GetValue(IsSelectedProperty); }
-            set { SetValue(IsSelectedProperty, value); }
-        }
-        public static readonly DependencyProperty IsSelectedProperty =
-                   DependencyProperty.Register("IsSelected", typeof(bool), typeof(PenControl), null);
-
-        public PenControl()
-        {
-            DrawingAttributes = new InkDrawingAttributes();
-            DrawingAttributes.Color = Windows.UI.Colors.White;
-            DrawingAttributes.DrawAsHighlighter = false;
-            DrawingAttributes.FitToCurve = true;
-            DrawingAttributes.IgnorePressure = false;
-            DrawingAttributes.IgnoreTilt = false;
-            DrawingAttributes.Size = new Windows.Foundation.Size(12, 12);
-            DrawingAttributes.PenTip = PenTipShape.Circle;
-            this.InitializeComponent();
-        }
+        public PenControl() => this.InitializeComponent();
 
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) => UpdateCanvas();
 
         public void UpdateCanvas()
         {
-            SliderCanvas.InkPresenter.StrokeContainer.Clear();
-            var strokeBuilder = new InkStrokeBuilder();
-            strokeBuilder.SetDefaultDrawingAttributes(DrawingAttributes);
+            try
+            {
+                SliderCanvas.InkPresenter.StrokeContainer.Clear();
+                var strokeBuilder = new InkStrokeBuilder();
+                strokeBuilder.SetDefaultDrawingAttributes(DrawingAttributes);
+                List<Point> Points;
+                Points = new List<Point>();
+                Points.Add(new Point(20, 40));
+                Points.Add(new Point(65, 10));
+                Points.Add(new Point(120, 40));
+                Points.Add(new Point(185, 70));
+                Points.Add(new Point(250, 40));
+                InkStroke stkA = strokeBuilder.CreateStroke(Points);
+                SliderCanvas.InkPresenter.StrokeContainer.AddStroke(stkA);
+                DrawingAttributes = DrawingAttributes;
+            }
+            catch
+            {
 
-            List<Point> Points;
-            Points = new List<Point>();
-            Points.Add(new Point(20, 40));
-            Points.Add(new Point(65, 10));
-            Points.Add(new Point(120, 40));
-            Points.Add(new Point(185, 70));
-            Points.Add(new Point(250, 40));
-            InkStroke stkA = strokeBuilder.CreateStroke(Points);
-            SliderCanvas.InkPresenter.StrokeContainer.AddStroke(stkA);
-            DrawingAttributes = DrawingAttributes;
-            //(sender, e) => UpdateLayout();
+            }
         }
 
         private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateCanvas();

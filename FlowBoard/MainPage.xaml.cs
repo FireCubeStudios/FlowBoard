@@ -19,6 +19,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.ComponentModel;
+using FlowBoard.Controls;
+using System.Collections.ObjectModel;
+using System.Numerics;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -29,6 +33,7 @@ namespace FlowBoard
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        ObservableCollection<InkDrawingAttributes> Pens = new ObservableCollection<InkDrawingAttributes>();
         public MainPage()
         {
             this.InitializeComponent();
@@ -36,8 +41,34 @@ namespace FlowBoard
             inkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
             CanvasSizeService.Initialize(inkCanvas);
             WindowService.Initialize(AppTitleBar);
-            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(Pen.DrawingAttributes);
-            //Register a handler for when the window changes focus
+            Pens.Add(new InkDrawingAttributes
+            {
+                Color = Windows.UI.Colors.White,
+                DrawAsHighlighter = false,
+                FitToCurve = true,
+                IgnorePressure = false,
+                IgnoreTilt = false,
+                Size = new Windows.Foundation.Size(12, 12),
+                PenTip = PenTipShape.Circle
+            });
+            Pens.Add(new InkDrawingAttributes
+            {
+                Color = Windows.UI.Colors.Yellow,
+                DrawAsHighlighter = true,
+                FitToCurve = true,
+                IgnorePressure = false,
+                IgnoreTilt = false,
+                Size = new Windows.Foundation.Size(24, 24),
+                PenTip = PenTipShape.Circle
+            });
+            InkDrawingAttributes pencilAttributes = InkDrawingAttributes.CreateForPencil();
+            pencilAttributes.Color = Windows.UI.Colors.White;
+            pencilAttributes.FitToCurve = true;
+            pencilAttributes.IgnorePressure = false;
+            pencilAttributes.IgnoreTilt = false;
+            pencilAttributes.Size = new Windows.Foundation.Size(12, 12);
+            pencilAttributes.PencilProperties.Opacity = 0.8f;
+            Pens.Add(pencilAttributes);
             Window.Current.Activated += Current_Activated;
         }
 
@@ -63,9 +94,63 @@ namespace FlowBoard
             inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
         }
 
-        private void Pen_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void PensList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(Pen.DrawingAttributes);
+            try
+            {
+                InkDrawingAttributes d = e.AddedItems[0] as InkDrawingAttributes;
+                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(d);
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void PenControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            InkDrawingAttributes d = PensList.SelectedItem as InkDrawingAttributes;
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(d);
+        }
+
+        private void AddPen_Click(object sender, RoutedEventArgs e)
+        {
+            Pens.Add(new InkDrawingAttributes
+            {
+                Color = Windows.UI.Colors.White,
+                DrawAsHighlighter = false,
+                FitToCurve = true,
+                IgnorePressure = false,
+                IgnoreTilt = false,
+                Size = new Windows.Foundation.Size(12, 12),
+                PenTip = PenTipShape.Circle
+            });
+        }
+
+        private void AddHighlighter_Click(object sender, RoutedEventArgs e)
+        {
+            Pens.Add(new InkDrawingAttributes
+            {
+                Color = Windows.UI.Colors.Yellow,
+                DrawAsHighlighter = true,
+                FitToCurve = true,
+                IgnorePressure = false,
+                IgnoreTilt = false,
+                Size = new Windows.Foundation.Size(24, 24),
+                PenTip = PenTipShape.Circle
+            });
+        }
+
+        private void AddPencil_Click(object sender, RoutedEventArgs e)
+        {
+            InkDrawingAttributes pencilAttributes = InkDrawingAttributes.CreateForPencil();
+            pencilAttributes.Color = Windows.UI.Colors.White;
+            pencilAttributes.FitToCurve = true;
+            pencilAttributes.IgnorePressure = false;
+            pencilAttributes.IgnoreTilt = false;
+            pencilAttributes.Size = new Windows.Foundation.Size(12, 12);
+            pencilAttributes.PencilProperties.Opacity = 0.8f;
+            Pens.Add(pencilAttributes);
         }
     }
 }

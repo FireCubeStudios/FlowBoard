@@ -245,9 +245,10 @@
                 </Setter>
             </Style>
         </Grid.Resources>
-        <ToggleButton Style="{ThemeResource PenButton}" Padding="8, 0, 8, 8" IsChecked="{x:Bind IsSelected, Mode=TwoWay}">
+        <Grid Padding="8, 0, 8, 8" >
+            <!-- Style="{ThemeResource PenButton}" IsChecked="{x:Bind IsSelected, Mode=TwoWay}"-->
             <Grid>
-                <Button Canvas.ZIndex="3" HorizontalAlignment="Stretch" Margin="0, -8, 0, 0" VerticalAlignment="Top" Height="16" Style="{ThemeResource ChevronButton}" Padding="8, 0, 8, 0">
+                <Button Canvas.ZIndex="3" HorizontalAlignment="Stretch" Margin="-4, -16, -4, 0" VerticalAlignment="Top" Height="32" Style="{ThemeResource ChevronButton}" Padding="-8, 0, -8, 0">
                     <icons:FluentSymbolIcon Symbol="ChevronUp12"/>
                     <Button.Flyout>
                         <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
@@ -267,14 +268,14 @@
                                         </StackPanel>
                                     </Grid>
                                     <InkCanvas Width="270" Height="100" x:Name="SliderCanvas"></InkCanvas>
-                                    <Slider Header="Thickness: " ValueChanged="Slider_ValueChanged" Value="{x:Bind DrawingAttributes.Size, Mode=TwoWay, Converter={StaticResource SizeConverter}}" Style="{ThemeResource GlowSlider}" Width="300" Minimum="8" Maximum="32"/>
+                                    <Slider Header="Thickness: " ValueChanged="Slider_ValueChanged" Value="{x:Bind DrawingAttributes.Size, Mode=TwoWay, Converter={StaticResource SizeConverter}}" Style="{ThemeResource GlowSlider}" Width="300" Minimum="0.5" Maximum="36"/>
                                 </StackPanel>
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
-                <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="InkingTool24" Margin="0, 8, 1, 0"/>
+                <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="{x:Bind helpers:UIHelper.PenToIcon(DrawingAttributes), Mode=OneWay}" Margin="0, 8, 1, 0"/>
             </Grid>
-        </ToggleButton>
+        </Grid>
     </Grid>
 </UserControl>
