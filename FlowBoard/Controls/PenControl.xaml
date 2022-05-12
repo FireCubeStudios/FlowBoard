@@ -275,6 +275,15 @@
                     </Button.Flyout>
                 </Button>
                 <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="{x:Bind helpers:UIHelper.PenToIcon(DrawingAttributes), Mode=OneWay}" Margin="0, 8, 1, 0"/>
+                <toolkit:DropShadowPanel CornerRadius="2" Margin="0,0,0,-12"                 VerticalAlignment="Bottom" 
+                HorizontalAlignment="Center" x:Name="Glow" Color="{x:Bind picker.Color, Mode=OneWay}" ShadowOpacity="0.93">
+                    <Grid x:Name="Pipe"
+                Height="8" Width="8" CornerRadius="12">
+                        <Grid.Background>
+                            <SolidColorBrush Color="{x:Bind picker.Color, Mode=OneWay}"/>
+                        </Grid.Background>
+                    </Grid>
+                </toolkit:DropShadowPanel>
             </Grid>
         </Grid>
     </Grid>
