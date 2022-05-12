@@ -261,24 +261,23 @@
                                                 <ToggleSwitch IsOn="{x:Bind DrawingAttributes.IgnoreTilt, Mode=TwoWay, Converter={StaticResource InvertBool}}" Style="{ThemeResource GlowSwitch}" Header="Tilt:" OnContent="On" OffContent="Off"/>
                                             </StackPanel>
                                         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top">
-                                            <controls:RadioButtons Header="Pen tip:" SelectionChanged="RadioButtons_SelectionChanged" SelectedIndex="{x:Bind DrawingAttributes.PenTip, Mode=TwoWay, Converter={StaticResource TipConverter}}">
+                                            <controls:RadioButtons x:Name="TipRadio" Header="Pen tip:" SelectionChanged="RadioButtons_SelectionChanged" SelectedIndex="{x:Bind DrawingAttributes.PenTip, Mode=TwoWay, Converter={StaticResource TipConverter}}">
                                                 <RadioButton Style="{ThemeResource GlowRadio}" Content="Circle"/>
                                                 <RadioButton Style="{ThemeResource GlowRadio}" Content="Rectangle"/>
                                             </controls:RadioButtons>
                                         </StackPanel>
                                     </Grid>
                                     <InkCanvas Width="270" Height="100" x:Name="SliderCanvas"></InkCanvas>
-                                    <Slider Header="Thickness: " ValueChanged="Slider_ValueChanged" Value="{x:Bind DrawingAttributes.Size, Mode=TwoWay, Converter={StaticResource SizeConverter}}" Style="{ThemeResource GlowSlider}" Width="300" Minimum="0.5" Maximum="36"/>
+                                    <Slider x:Name="SizeSlider" Header="Thickness: " ValueChanged="Slider_ValueChanged" Value="{x:Bind DrawingAttributes.Size, Mode=TwoWay, Converter={StaticResource SizeConverter}}" Style="{ThemeResource GlowSlider}" Width="300" Minimum="0.5" Maximum="36"/>
                                 </StackPanel>
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
                 <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Symbol="{x:Bind helpers:UIHelper.PenToIcon(DrawingAttributes), Mode=OneWay}" Margin="0, 8, 1, 0"/>
-                <toolkit:DropShadowPanel CornerRadius="2" Margin="0,0,0,-12"                 VerticalAlignment="Bottom" 
-                HorizontalAlignment="Center" x:Name="Glow" Color="{x:Bind picker.Color, Mode=OneWay}" ShadowOpacity="0.93">
+                <toolkit:DropShadowPanel BlurRadius="16" Margin="0,0,0,-20" VerticalAlignment="Bottom" HorizontalAlignment="Center" x:Name="Glow" Color="{x:Bind picker.Color, Mode=OneWay}" ShadowOpacity="0.93">
                     <Grid x:Name="Pipe"
-                Height="8" Width="8" CornerRadius="12">
+                Height="{x:Bind helpers:UIHelper.PenSizeToUISize(SizeSlider.Value), Mode=OneWay}" Width="{x:Bind helpers:UIHelper.PenSizeToUISize(SizeSlider.Value), Mode=OneWay}" CornerRadius="{x:Bind helpers:UIHelper.TipToRadius(TipRadio.SelectedIndex), Mode=OneWay}">
                         <Grid.Background>
                             <SolidColorBrush Color="{x:Bind picker.Color, Mode=OneWay}"/>
                         </Grid.Background>

@@ -94,20 +94,6 @@
                         </StackPanel>
                             <AppBarSeparator/>
                             <ListView x:Name="PensList" AllowDrop="True" CanDragItems="True" CanReorderItems="True" SelectionMode="Single" SelectedIndex="0" SelectionChanged="PensList_SelectionChanged" ItemsSource="{x:Bind Pens, Mode=OneWay}">
-                               <!-- <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="Margin" Value="0"/>
-                                        <Setter Property="Padding" Value="0"/>
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate>
-                                                    <ContentPresenter/>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListView.ItemContainerStyle>-->
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <VirtualizingStackPanel Orientation="Horizontal" />
