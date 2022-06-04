@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -101,34 +102,42 @@ namespace FlowBoard.Controls
         }
 
         //Points on Cubic Bezier Curve siehe https://www.cubic.org/docs/bezier.htm
-    
+        static Matrix3x2 OriginalTransform;
         private void UnprocessedInput_PointerMoved(InkUnprocessedInput sender, PointerEventArgs args)
         {
             TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth;
             TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth;
 
+            //Handle stroke transformation
+            foreach (InkStroke insr in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
+            {
+                if (insr.Selected == true)
+                {
+                    Matrix3x2.Invert(insr.PointTransform, out OriginalTransform);
+                }
+            }
             Point p1 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) - 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) - 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p2 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X + 0.5 * EraserHelper.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) + 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) - 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p3 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X + 0.5 * EraserHelper.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y + 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) + 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) + 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p4 = new Point()
             {
-                X = args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth,
-                Y = args.CurrentPoint.RawPosition.Y + 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) - 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) + 0.5 * EraserHelper.EraserWidth,
             };
 
             inkCanvas.InkPresenter.StrokeContainer.SelectWithLine(p1, p2);
