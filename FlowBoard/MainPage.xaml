@@ -9,7 +9,7 @@
     xmlns:icons="using:Fluent.Icons"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls" 
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
-    xmlns:UserControls="using:FlowBoard.Controls" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media" xmlns:helpers="using:FlowBoard.Helpers" xmlns:inking="using:Windows.UI.Input.Inking"
+    xmlns:UserControls="using:FlowBoard.Controls" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media" xmlns:inking="using:Windows.UI.Input.Inking"
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True"
     RequestedTheme="Dark"
     SizeChanged="Page_SizeChanged">
@@ -34,35 +34,22 @@
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
-                <TextBlock Opacity="0.7" Foreground="{x:Bind AppTitle.Foreground, Mode=OneWay}"
-                    Text="{x:Bind helpers:UIHelper.GetTitleInfo(Scrollgrid.ZoomFactor, inkCanvas.Width, inkCanvas.Height), Mode=OneWay}"
-                    VerticalAlignment="Center"
-                    Margin="8, 0, 0, 0"
-                    Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
         </Border>
         <Grid x:Name="ThemeGrid" Background="Black" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
-            <ScrollViewer x:Name="Scrollgrid" HorizontalScrollBarVisibility="Hidden"
-                  HorizontalScrollMode="Enabled" Grid.Row="1" MinZoomFactor="0.2" MaxZoomFactor="10"
-                  VerticalScrollBarVisibility="Hidden"
-                  ZoomMode="Enabled"
-                  VerticalScrollMode="Enabled">
-                
-                <Grid>
-                    <Canvas x:Name="Content_Canvas" IsHitTestVisible="True" Canvas.ZIndex="0" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
-                    </Canvas>
-                    <InkCanvas x:Name="inkCanvas" Visibility="Visible" IsHitTestVisible="False" Height="10000" Width="10000" MaxHeight="2097152" MaxWidth="2097152"/>
-                    <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
-                        <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
-                          OffsetX="0" OffsetY="0.0" IsMasked="True" Color="{ThemeResource SystemAccentColorLight2}">
-                            <toolkit:DropShadowPanel.RenderTransform>
-                                <TranslateTransform x:Name="TranslateTransform_RectangleEraser" X="{x:Bind EraserButtons.TransformX, Mode=OneWay}" Y="{x:Bind EraserButtons.TransformY, Mode=OneWay}"/>
-                            </toolkit:DropShadowPanel.RenderTransform>
-                            <Grid CornerRadius="2" Height="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Width="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Background="{ThemeResource SystemAccentColorLight1}"/>
-                        </toolkit:DropShadowPanel>
-                    </Canvas>
-                </Grid>
-            </ScrollViewer>
+            <Grid x:Name="ContentCanvas" Background="Transparent" ManipulationDelta="ink_ManipulationDelta" ManipulationMode="All">
+                <UserControls:TextControl/>
+            </Grid>
+            <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False"/>
+            <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
+                <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
+                        OffsetX="0" OffsetY="0.0" IsMasked="True" Color="{ThemeResource SystemAccentColorLight2}">
+                    <toolkit:DropShadowPanel.RenderTransform>
+                        <CompositeTransform x:Name="TranslateTransform_RectangleEraser" TranslateX="{x:Bind EraserButtons.TransformX, Mode=OneWay}" TranslateY="{x:Bind EraserButtons.TransformY, Mode=OneWay}"/>
+                    </toolkit:DropShadowPanel.RenderTransform>
+                    <Grid CornerRadius="2" Height="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Width="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Background="{ThemeResource SystemAccentColorLight1}"/>
+                </toolkit:DropShadowPanel>
+            </Canvas>
             <toolkit:DropShadowPanel BlurRadius="10.0" ShadowOpacity="0.4"
                           OffsetX="0" Canvas.ZIndex="3" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" OffsetY="0.0" IsMasked="True" Color="Black">
                 <Grid CornerRadius="8" Background="{ThemeResource MicaBrush}" BorderThickness="1" BorderBrush="{ThemeResource MicaBorderBrush}">
@@ -121,11 +108,6 @@
                                                 <icons:FluentIconElement Symbol="Highlight20"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="Add pencil" Click="AddPencil_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <icons:FluentIconElement Symbol="CalligraphyPen20"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
@@ -154,33 +136,8 @@
                                 <UserControls:InputTools inkCanvas="{x:Bind inkCanvas}"/>
                             </StackPanel>
                         </StackPanel>
-                        <AppBarSeparator/>
-                       <!-- <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Button>
-                                    <icons:FluentSymbolIcon Symbol="ArrowUndo20"/>
-                                </Button>
-                                <Button>
-                                    <icons:FluentSymbolIcon Symbol="ArrowRedo20"/>
-                                </Button>
-                                <ToggleSwitch Style="{ThemeResource ThemeSwitch}" IsOn="True" Margin="0" Width="44" OnContent="{x:Null}" OffContent="{x:Null}" RenderTransformOrigin="0.5, 0.5">
-                                    <ToggleSwitch.RenderTransform>
-                                        <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>
-                                    </ToggleSwitch.RenderTransform>
-                                </ToggleSwitch>
-                            </StackPanel>
-                            <Grid>
-                                <Button HorizontalAlignment="Left">
-                                    <icons:FluentSymbolIcon Symbol="ZoomIn20"/>
-                                </Button>
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.7" Text="75%"/>
-                                <Button HorizontalAlignment="Right">
-                                    <icons:FluentSymbolIcon Symbol="ZoomOut20"/>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                        <AppBarSeparator/>-->
-                        <StackPanel>
+                            <AppBarSeparator/>
+                            <StackPanel>
                             <Button>
                                 <icons:FluentSymbolIcon Symbol="Home20" Margin="0, 0, 1, 0"/>
                             </Button>

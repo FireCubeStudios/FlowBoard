@@ -1,10 +1,12 @@
-﻿using System;
+﻿using FlowBoard.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -48,12 +50,14 @@ namespace FlowBoard.Controls
 
         private void ContainerGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-                ResizeRectangle.Visibility = Visibility.Visible;
+            ResizeRectangle.Visibility = Visibility.Visible;
+            UIHelper.IsContentHovered = true;
         }
 
         private void ContainerGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-                ResizeRectangle.Visibility = Visibility.Collapsed;
+            ResizeRectangle.Visibility = Visibility.Collapsed;
+            UIHelper.IsContentHovered = false;
         }
     }
 }

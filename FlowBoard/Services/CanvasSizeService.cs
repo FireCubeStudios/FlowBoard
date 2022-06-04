@@ -22,10 +22,10 @@ namespace FlowBoard.Services
         public static void Initialize(InkCanvas _inkCanvas)
         {
             inkCanvas = _inkCanvas;
-            inkCanvas.InkPresenter.StrokeInput.StrokeEnded += adjustInkCanvasSize;
-            inkCanvas.Height = 10000;
-            inkCanvas.Width = 10000;
-            inkCanvas.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
+         //   inkCanvas.InkPresenter.StrokeInput.StrokeEnded += adjustInkCanvasSize;
+           // inkCanvas.Height = 10000;
+           // inkCanvas.Width = 10000;
+          //  inkCanvas.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
         }
 
         private static async void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)

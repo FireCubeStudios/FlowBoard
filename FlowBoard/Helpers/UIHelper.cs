@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Input.Inking;
@@ -12,6 +13,8 @@ namespace FlowBoard.Helpers
 {
     public class UIHelper
     {
+        public static bool IsContentHovered = false; //if a content control like text or picture is being hovered on
+
         public static string GetTitleInfo(Single zoom, double width, double height) => $"SAVED  · {Math.Round(zoom * 10, 0)}%  · {Math.Round(width, 0)} x {Math.Round(height, 0)}";
 
         public static FluentSymbol PenToIcon(InkDrawingAttributes ink)
