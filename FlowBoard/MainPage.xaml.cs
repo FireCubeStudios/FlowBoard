@@ -136,19 +136,31 @@ namespace FlowBoard
 
         public static Matrix4x4 ToMatrix4x4(Matrix3x2 matrix)
         {
-            return new Matrix4x4(matrix.M11, matrix.M12, 0, 0,
+            return new Matrix4x4(
+               matrix.M11, matrix.M12, 0, 0,
                matrix.M21, matrix.M22, 0, 0,
                0, 0, 1, 0,
                matrix.M31, matrix.M32, 0, 1);
         }
-
+        private double Scale = 1;
         private void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (UIHelper.IsContentHovered == false)
             {
+                // return if scaling is too big or small
+                if(e.Delta.Scale > 1 && Scale >= 2.5)
+                {
+                    return;
+                }
+                if (e.Delta.Scale < 1 && Scale <= 0.2)
+                {
+                    return;
+                }
+                Scale *= e.Delta.Scale;
                 var scale = Matrix3x2.CreateScale(e.Delta.Scale);
                 // Matrix3x2.CreateRotation((float)(e.Delta.Rotation / 180 * Math.PI)) *
-                var transform = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * scale *
+                var transform = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
+                                scale *
                                 Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
                                 Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
                 List<Rect> individualBoundingRects = new List<Rect>();
@@ -178,7 +190,11 @@ namespace FlowBoard
                 TranslateTransform_RectangleEraser.ScaleY *= e.Delta.Scale;
                 foreach (var i in ContentCanvas.Children)
                 {
-                    i.TransformMatrix *= ToMatrix4x4(transform);
+                    var transformXXX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
+                                       scale *
+                                       Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
+                                       Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
+                    i.TransformMatrix *= ToMatrix4x4(transformXXX);
                 }
             }
         }

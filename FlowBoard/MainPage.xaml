@@ -39,6 +39,8 @@
         <Grid x:Name="ThemeGrid" Background="Black" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
             <Grid x:Name="ContentCanvas" Background="Transparent" ManipulationDelta="ink_ManipulationDelta" ManipulationMode="All">
                 <UserControls:TextControl/>
+                <UserControls:TextControl/>
+                <UserControls:TextControl/>
             </Grid>
             <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False"/>
             <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
