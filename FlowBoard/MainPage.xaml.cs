@@ -168,7 +168,7 @@ namespace FlowBoard
         }
 
         private double AggregateScale = 1;
-        private void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private async void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (UIHelper.IsContentHovered == false)
             {
@@ -223,6 +223,14 @@ namespace FlowBoard
                 if(e.Delta.Scale != 1)
                 {
                    Scroll.ChangeView(x, y, Scroll.ZoomFactor * e.Delta.Scale);
+                    /*  Scroll.ZoomToFactor(Scroll.ZoomFactor * e.Delta.Scale);
+
+                      var dispatcher = Window.Current.CoreWindow.Dispatcher;
+                      await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+                      {
+                          Scroll.ScrollToHorizontalOffset(e.Delta.get);
+                          Scroll.ScrollToVerticalOffset(e.Position.Y);
+                      });*/ //https://stackoverflow.com/questions/37380661/uwp-zooming-image-with-pinch-zoom-and-double-tap-with-flip-view
                 }
                 foreach (var i in ContentCanvas.Children)
                 {
