@@ -36,13 +36,13 @@
                     Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
         </Border>
-        <Grid x:Name="ThemeGrid" Background="Black" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
-            <ScrollViewer x:Name="Scroll" MinZoomFactor="1" MaxZoomFactor="10" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" HorizontalScrollMode="Disabled" ZoomMode="Enabled">
+        <Grid x:Name="ThemeGrid" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
+            <ScrollViewer x:Name="Scroll" MinZoomFactor="0.25" MaxZoomFactor="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" HorizontalScrollMode="Disabled" ZoomMode="Enabled">
                 <Grid>
-                    <Grid x:Name="ContentCanvas" Background="Transparent" ManipulationDelta="ink_ManipulationDelta" ManipulationMode="All">
+                    <Grid x:Name="ContentCanvas" Background="Black" Width="{x:Bind inkCanvas.Width, Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}" ManipulationDelta="ink_ManipulationDelta" ManipulationMode="All">
                         <UserControls:TextControl/>
                     </Grid>
-                    <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False"/>
+                    <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False" Loaded="inkCanvas_Loaded"/>
                     <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
                         <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
                         OffsetX="0" OffsetY="0.0" IsMasked="True" Color="{ThemeResource SystemAccentColorLight2}">

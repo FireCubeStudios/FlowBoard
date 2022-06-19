@@ -91,8 +91,10 @@ namespace FlowBoard
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-         //   inkCanvas.Height = (e.NewSize.Height < inkCanvas.Height) ? inkCanvas.Height : e.NewSize.Height;
-          //  inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
+            //    inkCanvas.Height = (e.NewSize.Height < inkCanvas.Height) ? inkCanvas.Height : e.NewSize.Height;
+            //   inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
+            inkCanvas.Height = e.NewSize.Height / Scroll.ZoomFactor;
+            inkCanvas.Width = e.NewSize.Width / Scroll.ZoomFactor;
         }
 
         private void PensList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -126,6 +128,7 @@ namespace FlowBoard
                 Size = new Windows.Foundation.Size(12, 12),
                 PenTip = PenTipShape.Circle
             });
+            PensList.SelectedIndex = PensList.Items.Count - 1;
         }
 
         private void AddHighlighter_Click(object sender, RoutedEventArgs e)
@@ -140,6 +143,7 @@ namespace FlowBoard
                 Size = new Windows.Foundation.Size(24, 24),
                 PenTip = PenTipShape.Circle
             });
+            PensList.SelectedIndex = PensList.Items.Count - 1;
         }
 
         private void AddPencil_Click(object sender, RoutedEventArgs e)
@@ -152,6 +156,7 @@ namespace FlowBoard
             pencilAttributes.Size = new Windows.Foundation.Size(12, 12);
             pencilAttributes.PencilProperties.Opacity = 0.8f;
             Pens.Add(pencilAttributes);
+            PensList.SelectedIndex = PensList.Items.Count - 1;
         }
         public static Matrix4x4 ToMatrix4x4(Matrix3x2 matrix)
         {
@@ -168,21 +173,28 @@ namespace FlowBoard
             if (UIHelper.IsContentHovered == false)
             {
                 // return if scaling is too big or small
-                if(e.Delta.Scale > 1 && AggregateScale >= 2.5)
-                {
-                    return;
-                }
-                if (e.Delta.Scale < 1 && AggregateScale <= 0.2)
-                {
-                    return;
-                }
+                /* if(e.Delta.Scale > 1 && AggregateScale >= 2.5)
+                 {
+                     return;
+                 }
+                 if (e.Delta.Scale < 1 && AggregateScale <= 0.2)
+                 {
+                     return;
+                 }*/
+                var pointerPosition = Windows.UI.Core.CoreWindow.GetForCurrentThread().PointerPosition;
+                var x = pointerPosition.X - Window.Current.Bounds.X;
+                var y = pointerPosition.Y - Window.Current.Bounds.Y;
+                inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+                inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
+                x = x - inkCanvas.Height;
+                y = y - inkCanvas.Width;
                 AggregateScale *= e.Delta.Scale;
                 var scale = Matrix3x2.CreateScale(e.Delta.Scale);
                 // Matrix3x2.CreateRotation((float)(e.Delta.Rotation / 180 * Math.PI)) *
                 var transform = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
                                /* scale **/
                                 Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
-                                Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
+                                Matrix3x2.CreateTranslation((float)e.Delta.Translation.X / Scroll.ZoomFactor, (float)e.Delta.Translation.Y / Scroll.ZoomFactor);
                 List<Rect> individualBoundingRects = new List<Rect>();
 
                 var targetStrokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
@@ -210,8 +222,7 @@ namespace FlowBoard
               //  TranslateTransform_RectangleEraser.ScaleY *= e.Delta.Scale;
                 if(e.Delta.Scale != 1)
                 {
-                    //  Scroll.ChangeView(e.Position.X, e.Position.Y, Scroll.ZoomFactor * e.Delta.Scale);
-                    Scroll.ChangeView(0, 0, Scroll.ZoomFactor * e.Delta.Scale);
+                   Scroll.ChangeView(x, y, Scroll.ZoomFactor * e.Delta.Scale);
                 }
                 foreach (var i in ContentCanvas.Children)
                 {
@@ -232,11 +243,12 @@ namespace FlowBoard
                     xx.X = (float)e.Position.X;
                     xx.Y = (float)e.Position.Y;
                     i.CenterPoint = xx;*/
+                  
                     var transformX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) *
                         scale *
                      Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
                      Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
-                       i.TransformMatrix *= ToMatrix4x4(Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y));
+                       i.TransformMatrix *= ToMatrix4x4(Matrix3x2.CreateTranslation((float)e.Delta.Translation.X / Scroll.ZoomFactor, (float)e.Delta.Translation.Y / Scroll.ZoomFactor));
                     /// i.Scale *= e.Delta.Scale;
 
                 /* var t = i.Translation;
@@ -248,6 +260,12 @@ namespace FlowBoard
                     // }
                 }
             }
+        }
+
+        private void inkCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+            inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
     }
 }
