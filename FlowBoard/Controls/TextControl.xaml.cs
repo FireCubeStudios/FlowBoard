@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -33,7 +34,14 @@ namespace FlowBoard.Controls
             if (e.Position.X > Width - ResizeRectangle.Width && e.Position.Y > Height - ResizeRectangle.Height) _isResizing = true;
             else _isResizing = false;
         }
-
+        public static Matrix4x4 ToMatrix4x4(Matrix3x2 matrix)
+        {
+            return new Matrix4x4(
+               matrix.M11, matrix.M12, 0, 0,
+               matrix.M21, matrix.M22, 0, 0,
+               0, 0, 1, 0,
+               matrix.M31, matrix.M32, 0, 1);
+        }
         private void Manipulator_OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (_isResizing)
@@ -43,8 +51,15 @@ namespace FlowBoard.Controls
             }
             else
             {
-                Canvas.SetLeft(this, Canvas.GetLeft(this) + e.Delta.Translation.X);
-                Canvas.SetTop(this, Canvas.GetTop(this) + e.Delta.Translation.Y);
+                //  Canvas.SetLeft(this, Canvas.GetLeft(this) + e.Delta.Translation.X);
+                // Canvas.SetTop(this, Canvas.GetTop(this) + e.Delta.Translation.Y);
+                var scale = Matrix3x2.CreateScale(e.Delta.Scale);
+                Matrix3x2 transformX;
+                transformX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) *
+                           scale *
+                                      Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
+                                      Matrix3x2.CreateTranslation((float)(e.Delta.Translation.X), (float)(e.Delta.Translation.Y));
+                this.TransformMatrix *= ToMatrix4x4(transformX);
             }
         }
 

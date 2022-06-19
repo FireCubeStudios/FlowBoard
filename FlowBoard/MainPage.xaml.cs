@@ -62,6 +62,14 @@ namespace FlowBoard
                 Size = new Windows.Foundation.Size(24, 24),
                 PenTip = PenTipShape.Circle
             });
+            InkDrawingAttributes pencilAttributes = InkDrawingAttributes.CreateForPencil();
+            pencilAttributes.Color = Windows.UI.Colors.White;
+            pencilAttributes.FitToCurve = true;
+            pencilAttributes.IgnorePressure = false;
+            pencilAttributes.IgnoreTilt = false;
+            pencilAttributes.Size = new Windows.Foundation.Size(12, 12);
+            pencilAttributes.PencilProperties.Opacity = 0.8f;
+            Pens.Add(pencilAttributes);
             Window.Current.Activated += Current_Activated;
         }
 
@@ -83,8 +91,10 @@ namespace FlowBoard
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-         //   inkCanvas.Height = (e.NewSize.Height < inkCanvas.Height) ? inkCanvas.Height : e.NewSize.Height;
-          //  inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
+            //    inkCanvas.Height = (e.NewSize.Height < inkCanvas.Height) ? inkCanvas.Height : e.NewSize.Height;
+            //   inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
+            inkCanvas.Height = e.NewSize.Height / Scroll.ZoomFactor;
+            inkCanvas.Width = e.NewSize.Width / Scroll.ZoomFactor;
         }
 
         private void PensList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -118,6 +128,7 @@ namespace FlowBoard
                 Size = new Windows.Foundation.Size(12, 12),
                 PenTip = PenTipShape.Circle
             });
+            PensList.SelectedIndex = PensList.Items.Count - 1;
         }
 
         private void AddHighlighter_Click(object sender, RoutedEventArgs e)
@@ -132,8 +143,21 @@ namespace FlowBoard
                 Size = new Windows.Foundation.Size(24, 24),
                 PenTip = PenTipShape.Circle
             });
+            PensList.SelectedIndex = PensList.Items.Count - 1;
         }
 
+        private void AddPencil_Click(object sender, RoutedEventArgs e)
+        {
+            InkDrawingAttributes pencilAttributes = InkDrawingAttributes.CreateForPencil();
+            pencilAttributes.Color = Windows.UI.Colors.White;
+            pencilAttributes.FitToCurve = true;
+            pencilAttributes.IgnorePressure = false;
+            pencilAttributes.IgnoreTilt = false;
+            pencilAttributes.Size = new Windows.Foundation.Size(12, 12);
+            pencilAttributes.PencilProperties.Opacity = 0.8f;
+            Pens.Add(pencilAttributes);
+            PensList.SelectedIndex = PensList.Items.Count - 1;
+        }
         public static Matrix4x4 ToMatrix4x4(Matrix3x2 matrix)
         {
             return new Matrix4x4(
@@ -142,27 +166,35 @@ namespace FlowBoard
                0, 0, 1, 0,
                matrix.M31, matrix.M32, 0, 1);
         }
-        private double Scale = 1;
+
+        private double AggregateScale = 1;
         private void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (UIHelper.IsContentHovered == false)
             {
                 // return if scaling is too big or small
-                if(e.Delta.Scale > 1 && Scale >= 2.5)
-                {
-                    return;
-                }
-                if (e.Delta.Scale < 1 && Scale <= 0.2)
-                {
-                    return;
-                }
-                Scale *= e.Delta.Scale;
+                /* if(e.Delta.Scale > 1 && AggregateScale >= 2.5)
+                 {
+                     return;
+                 }
+                 if (e.Delta.Scale < 1 && AggregateScale <= 0.2)
+                 {
+                     return;
+                 }*/
+                var pointerPosition = Windows.UI.Core.CoreWindow.GetForCurrentThread().PointerPosition;
+                var x = pointerPosition.X - Window.Current.Bounds.X;
+                var y = pointerPosition.Y - Window.Current.Bounds.Y;
+                inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+                inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
+                x = x - inkCanvas.Height;
+                y = y - inkCanvas.Width;
+                AggregateScale *= e.Delta.Scale;
                 var scale = Matrix3x2.CreateScale(e.Delta.Scale);
                 // Matrix3x2.CreateRotation((float)(e.Delta.Rotation / 180 * Math.PI)) *
                 var transform = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
-                                scale *
+                               /* scale **/
                                 Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
-                                Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
+                                Matrix3x2.CreateTranslation((float)e.Delta.Translation.X / Scroll.ZoomFactor, (float)e.Delta.Translation.Y / Scroll.ZoomFactor);
                 List<Rect> individualBoundingRects = new List<Rect>();
 
                 var targetStrokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
@@ -175,7 +207,7 @@ namespace FlowBoard
                     // Fix for pencil stroke movement blowup. Avoid being 1 stared in the store.
                     if (attr.Kind != InkDrawingAttributesKind.Pencil)
                     {
-                        attr.PenTipTransform *= scale;
+                     ///   attr.PenTipTransform *= scale;
                         stroke.DrawingAttributes = attr;
                     }
                     stroke.PointTransform *= transform;
@@ -183,20 +215,57 @@ namespace FlowBoard
                 InkDrawingAttributes d = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
                 if (d.Kind != InkDrawingAttributesKind.Pencil)
                 {
-                    d.PenTipTransform *= scale;
+                  ///  d.PenTipTransform *= scale;
                     inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(d);
                 }
-                TranslateTransform_RectangleEraser.ScaleX *= e.Delta.Scale;
-                TranslateTransform_RectangleEraser.ScaleY *= e.Delta.Scale;
+               // TranslateTransform_RectangleEraser.ScaleX *= e.Delta.Scale;
+              //  TranslateTransform_RectangleEraser.ScaleY *= e.Delta.Scale;
+                if(e.Delta.Scale != 1)
+                {
+                   Scroll.ChangeView(x, y, Scroll.ZoomFactor * e.Delta.Scale);
+                }
                 foreach (var i in ContentCanvas.Children)
                 {
-                    var transformXXX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
-                                       scale *
-                                       Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
-                                       Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
-                    i.TransformMatrix *= ToMatrix4x4(transformXXX);
+                    /*  if (e.Delta.Scale > 1)
+                      {
+                          if (e.Position.X < 0 && e.Delta.Translation.Y > 0)
+                          {
+                              AppTitle.Text = "-posX: " + -e.Position.X + " -posY: " + -e.Position.Y + " posX: " + e.Position.X + " posY: " + e.Position.Y + " TranslateX: " + e.Delta.Translation.X + " TranslateY: " + e.Delta.Translation.Y;
+                              var transform = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) *
+                         scale *
+                         Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
+                         Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
+                          }
+                      }
+                      else
+                      {*/
+                   /* var xx = i.CenterPoint;
+                    xx.X = (float)e.Position.X;
+                    xx.Y = (float)e.Position.Y;
+                    i.CenterPoint = xx;*/
+                  
+                    var transformX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) *
+                        scale *
+                     Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
+                     Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
+                       i.TransformMatrix *= ToMatrix4x4(Matrix3x2.CreateTranslation((float)e.Delta.Translation.X / Scroll.ZoomFactor, (float)e.Delta.Translation.Y / Scroll.ZoomFactor));
+                    /// i.Scale *= e.Delta.Scale;
+
+                /* var t = i.Translation;
+                 t.X *= (float)e.Delta.Translation.X;
+                 t.Y *= (float)e.Delta.Translation.Y;
+                 i.Translation = t;*/
+                    // i.CenterPoint.X = e.Position.X;
+                    // i.CenterPoint.Y = e.Position.Y
+                    // }
                 }
             }
+        }
+
+        private void inkCanvas_Loaded(object sender, RoutedEventArgs e)
+        {
+            inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+            inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
     }
 }

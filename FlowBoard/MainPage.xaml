@@ -36,22 +36,24 @@
                     Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
         </Border>
-        <Grid x:Name="ThemeGrid" Background="Black" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
-            <Grid x:Name="ContentCanvas" Background="Transparent" ManipulationDelta="ink_ManipulationDelta" ManipulationMode="All">
-                <UserControls:TextControl/>
-                <UserControls:TextControl/>
-                <UserControls:TextControl/>
-            </Grid>
-            <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False"/>
-            <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
-                <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
+        <Grid x:Name="ThemeGrid" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
+            <ScrollViewer x:Name="Scroll" MinZoomFactor="0.25" MaxZoomFactor="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" HorizontalScrollMode="Disabled" ZoomMode="Enabled">
+                <Grid>
+                    <Grid x:Name="ContentCanvas" Background="Black" Width="{x:Bind inkCanvas.Width, Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}" ManipulationDelta="ink_ManipulationDelta" ManipulationMode="All">
+                        <UserControls:TextControl/>
+                    </Grid>
+                    <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False" Loaded="inkCanvas_Loaded"/>
+                    <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" MaxHeight="2097152" MaxWidth="2097152" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
+                        <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
                         OffsetX="0" OffsetY="0.0" IsMasked="True" Color="{ThemeResource SystemAccentColorLight2}">
-                    <toolkit:DropShadowPanel.RenderTransform>
-                        <CompositeTransform x:Name="TranslateTransform_RectangleEraser" TranslateX="{x:Bind EraserButtons.TransformX, Mode=OneWay}" TranslateY="{x:Bind EraserButtons.TransformY, Mode=OneWay}"/>
-                    </toolkit:DropShadowPanel.RenderTransform>
-                    <Grid CornerRadius="2" Height="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Width="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Background="{ThemeResource SystemAccentColorLight1}"/>
-                </toolkit:DropShadowPanel>
-            </Canvas>
+                            <toolkit:DropShadowPanel.RenderTransform>
+                                <CompositeTransform x:Name="TranslateTransform_RectangleEraser" TranslateX="{x:Bind EraserButtons.TransformX, Mode=OneWay}" TranslateY="{x:Bind EraserButtons.TransformY, Mode=OneWay}"/>
+                            </toolkit:DropShadowPanel.RenderTransform>
+                            <Grid CornerRadius="2" Height="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Width="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Background="{ThemeResource SystemAccentColorLight1}"/>
+                        </toolkit:DropShadowPanel>
+                    </Canvas>
+                </Grid>
+            </ScrollViewer>
             <toolkit:DropShadowPanel BlurRadius="10.0" ShadowOpacity="0.4"
                           OffsetX="0" Canvas.ZIndex="3" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" OffsetY="0.0" IsMasked="True" Color="Black">
                 <Grid CornerRadius="8" Background="{ThemeResource MicaBrush}" BorderThickness="1" BorderBrush="{ThemeResource MicaBorderBrush}">
@@ -108,6 +110,11 @@
                                         <MenuFlyoutItem Text="Add highlighter" Click="AddHighlighter_Click">
                                             <MenuFlyoutItem.Icon>
                                                 <icons:FluentIconElement Symbol="Highlight20"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Text="Add pencil" Click="AddPencil_Click">
+                                            <MenuFlyoutItem.Icon>
+                                                <icons:FluentIconElement Symbol="CalligraphyPen20"/>
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                     </MenuFlyout>
