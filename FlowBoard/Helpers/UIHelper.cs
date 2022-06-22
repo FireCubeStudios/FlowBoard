@@ -13,8 +13,6 @@ namespace FlowBoard.Helpers
 {
     public class UIHelper
     {
-        public static bool IsContentHovered = false; //if a content control like text or picture is being hovered on
-
         public static string GetTitleInfo(Single zoom, double width, double height) => $"SAVED  · {Math.Round(zoom * 10, 0)}%  · {Math.Round(width, 0)} x {Math.Round(height, 0)}";
 
         public static FluentSymbol PenToIcon(InkDrawingAttributes ink)
@@ -31,6 +29,6 @@ namespace FlowBoard.Helpers
 
         public static CornerRadius TipToRadius(int index) => index == 0 ? new CornerRadius(12, 12, 12, 12) : new CornerRadius(1, 1, 1, 1);
 
-        public static double PenSizeToUISize(double size) => (0.2 * size) + 4;//(10 * Math.Log10(size + 1) + 1); //10log(x + 1) + 1 is the function for representing the size
+        public static double PenSizeToUISize(double size) => (0.2 * size) + 4; 
     }
 }

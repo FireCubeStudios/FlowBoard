@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using FlowBoard.Services;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Windows.Foundation;
@@ -10,13 +13,10 @@ namespace FlowBoard.Helpers
 {
     public class EraserHelper
     {
-        //Eraser Properties
         public static int EraserWidth = 16;
-
-        private static Matrix3x2 OriginalTransform;
         private static Matrix3x2 InverseTransform;
 
-        //Points on Cubic Bezier Curve siehe https://www.cubic.org/docs/bezier.htm
+        //  Points on Cubic Bezier Curve siehe https://www.cubic.org/docs/bezier.htm
         public static Point lerp(Point a, Point b, float t)
         {
             Point p = new Point()
@@ -50,7 +50,6 @@ namespace FlowBoard.Helpers
         public static List<Point> PointsOnSegment(Point startPt, Point controlPt1, Point controlPt2, Point PositionPt)
         {
             List<Point> points = new List<Point>();
-
             for (int i = 0; i < 10; i++)
             {
                 Point p = new Point();
@@ -60,11 +59,11 @@ namespace FlowBoard.Helpers
             }
             return points;
         }
+
         public static List<Point> GetPointsOnStroke(InkStroke inst)
         {
             List<InkStrokeRenderingSegment> renderingSegments = new List<InkStrokeRenderingSegment>();
             List<Point> points = new List<Point>();
-            //First Point on InkStroke
             points.Add(new Point() { X = inst.GetInkPoints().First().Position.X, Y = inst.GetInkPoints().First().Position.Y, });
 
             foreach (InkStrokeRenderingSegment isrs in inst.GetRenderingSegments())
@@ -73,12 +72,15 @@ namespace FlowBoard.Helpers
                 pointsOnSg = PointsOnSegment(points.Last(), isrs.BezierControlPoint1, isrs.BezierControlPoint2, isrs.Position);
                 points.AddRange(pointsOnSg);
             }
-
             return points;
         }
+
         public static bool PointInRectangle(Point ap, Point ec, int eraserwidth)
         {
-            if ((ap.X >= (ec.X + InverseTransform.Translation.X) - eraserwidth && ap.X <= (ec.X + InverseTransform.Translation.X) + eraserwidth) && (ap.Y >= (ec.Y + InverseTransform.Translation.Y) - eraserwidth && ap.Y <= (ec.Y +InverseTransform.Translation.Y) + eraserwidth))
+            if ((ap.X >= (ec.X + InverseTransform.Translation.X) - eraserwidth &&
+                 ap.X <= (ec.X + InverseTransform.Translation.X) + eraserwidth) &&
+                 (ap.Y >= (ec.Y + InverseTransform.Translation.Y) - eraserwidth &&
+                 ap.Y <= (ec.Y + InverseTransform.Translation.Y) + eraserwidth))
             {
                 return true;
             }
@@ -90,94 +92,111 @@ namespace FlowBoard.Helpers
 
         public static void ErasePoints(PointerEventArgs args, InkCanvas inkCanvas)
         {
-            //Handle stroke transformation ONGOING
-            //New stroke created from sratch to prevent glitch from modifying old stroke
             List<InkStroke> SelectedStrokes = new List<InkStroke>();
             foreach (InkStroke insr in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
             {
                 if (insr.Selected == true)
                 {
-                     /* var strokeBuilder = new InkStrokeBuilder();
-                      strokeBuilder.SetDefaultDrawingAttributes(insr.DrawingAttributes);
-                      List<Point> Points = new List<Point>();
-                      foreach(var i in insr.GetInkPoints())
-                      {
-                          Points.Add(new Point(i.Position.X, i.Position.Y));
-                      }
-
-                      InkStroke newi = strokeBuilder.CreateStroke(Points);
-                      Matrix3x2.Invert(insr.PointTransform, out InverseTransform);
-                      newi.PointTransform *= InverseTransform;
-                      SelectedStrokes.Add(newi);*/
-
-                     OriginalTransform = insr.PointTransform;
-                    Matrix3x2.Invert(insr.PointTransform, out InverseTransform);
-                    insr.PointTransform *= InverseTransform;
                     SelectedStrokes.Add(insr);
                 }
             }
-
+            // Return void if there are no strokes intersecting the eraser
+            if (SelectedStrokes.Count == 0)
+            {
+                return;
+            }
             InkDrawingAttributes ida;
             List<Point> pointsOnStroke;
             List<Point> PointsA;
-            List<Point> PointsB;
-
+            List<Point> PointsB;      
             for (int i = 0; i < SelectedStrokes.Count; i++)
             {
                 ida = SelectedStrokes[i].DrawingAttributes;
+                Matrix3x2.Invert(SelectedStrokes[i].PointTransform, out InverseTransform); // Get the inverse transform
                 pointsOnStroke = GetPointsOnStroke(SelectedStrokes[i]);
+                //  Stroke A
                 PointsA = new List<Point>();
+                //  Stroke B
                 PointsB = new List<Point>();
-
+                //  If the point is in stroke A
                 bool IsA = true;
-
-                foreach (Point pt in pointsOnStroke)
+                foreach (Point ii in pointsOnStroke)
                 {
-                    if (PointInRectangle(pt, args.CurrentPoint.RawPosition, EraserWidth) == true)
+                    //  Check if points are within eraser bounds
+                    if (PointInRectangle(ii, args.CurrentPoint.RawPosition, EraserWidth) == true)
                     {
+                        //  If the point is in the eraser hitbox then the next points should be in stroke B
                         IsA = false;
                     }
                     else
                     {
                         if (IsA == true)
                         {
-                            PointsA.Add(pt);
+                            PointsA.Add(ii);
                         }
                         else
                         {
-                            PointsB.Add(pt);
+                            PointsB.Add(ii);
                         }
                     }
                 }
-
-                if (PointsA.Count > 0 || PointsB.Count > 0)
+                //  If the stroke had a PointTransform then remove the first 8 points in Line A
+                if (SelectedStrokes[i].PointTransform.Translation.X != 0 && SelectedStrokes[i].PointTransform.Translation.Y != 0)
                 {
-                    var strokeBuilder = new InkStrokeBuilder();
-                    strokeBuilder.SetDefaultDrawingAttributes(ida);
-
-
-                    if (PointsA.Count > 0)
+                    try
                     {
-                        InkStroke stkA = strokeBuilder.CreateStroke(PointsA);
-                        stkA.PointTransform = OriginalTransform;
-                        inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkA);
+                        PointsA.RemoveRange(0, 8);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                            PointsA.RemoveAt(0);
+                        }
+                        catch
+                        {
 
-                        if (PointsB.Count > 0)
+                        }
+                    }
+                }
+                // Draw the remaining strokes
+                if (PointsA.Count > 0 || PointsB.Count > 0)
+                    {
+                        var strokeBuilder = new InkStrokeBuilder();
+                        strokeBuilder.SetDefaultDrawingAttributes(ida);
+                        //  Draw the first stroke A
+                        if (PointsA.Count > 0)
+                        {
+                            InkStroke stkA = strokeBuilder.CreateStroke(PointsA);
+                            //   stkA.PointTransform = OriginalTransform;
+
+                            inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkA);
+                            //  Draw the stroke B if it exists
+                            if (PointsB.Count > 0)
+                            {
+                                InkStroke stkB = strokeBuilder.CreateStroke(PointsB);
+                                //  stkB.PointTransform = OriginalTransform;
+                                inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkB);
+                            }
+                        }
+                        //  Draw the stroke B if it exists
+                        else if (PointsB.Count > 0)
                         {
                             InkStroke stkB = strokeBuilder.CreateStroke(PointsB);
-                            stkB.PointTransform = OriginalTransform;
+                            // stkB.PointTransform = OriginalTransform;
                             inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkB);
                         }
                     }
-                    else if (PointsB.Count > 0)
-                    {
-                        InkStroke stkB = strokeBuilder.CreateStroke(PointsB);
-                        stkB.PointTransform = OriginalTransform;
-                        inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkB);
-                    }
-                }
+                    inkCanvas.InkPresenter.StrokeContainer.DeleteSelected();
             }
-            inkCanvas.InkPresenter.StrokeContainer.DeleteSelected();
         }
     }
 }
+

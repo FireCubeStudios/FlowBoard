@@ -17,7 +17,9 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <PackageCertificateThumbprint>00E95C3FAD42BD7746B10B1BEFB33D44991CE752</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -119,7 +121,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DeltaControl.cs" />
     <Compile Include="Controls\InputTools.xaml.cs">
       <DependentUpon>InputTools.xaml</DependentUpon>
     </Compile>
@@ -129,9 +130,6 @@
     <Compile Include="Controls\StencilTools.xaml.cs">
       <DependentUpon>StencilTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TextControl.xaml.cs">
-      <DependentUpon>TextControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\EraserControl.xaml.cs">
       <DependentUpon>EraserControl.xaml</DependentUpon>
     </Compile>
@@ -140,6 +138,7 @@
     <Compile Include="Converters\TipToIndexConverter.cs" />
     <Compile Include="Helpers\EraserHelper.cs" />
     <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="Helpers\FlowMatrixHelper.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -224,19 +223,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TextControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\EraserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

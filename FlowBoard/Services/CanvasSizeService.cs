@@ -1,89 +1,82 @@
-﻿using System;
+﻿using FlowBoard.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Input.Inking;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace FlowBoard.Services
 {
     class CanvasSizeService
     {
-        private static double originalX;
-        private static double originalY;
-        private static double maxX = 0.0;
-        private static double maxY = 0.0;
-        private static bool flag = true;
+        private static float Scale = 1;
+        private static InkCanvas inkCanvas;
+        private static CompositeTransform EraserTransform;
+        private static ScrollViewer Scroll;
 
-        public static InkCanvas inkCanvas { get; set; }
-
-        public static void Initialize(InkCanvas _inkCanvas)
+        public static void Initialize(InkCanvas _inkCanvas, CompositeTransform _EraserTransform, ScrollViewer _Scroll)
         {
             inkCanvas = _inkCanvas;
-         //   inkCanvas.InkPresenter.StrokeInput.StrokeEnded += adjustInkCanvasSize;
-           // inkCanvas.Height = 10000;
-           // inkCanvas.Width = 10000;
-          //  inkCanvas.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
+            EraserTransform = _EraserTransform;
+            Scroll = _Scroll;
+            inkCanvas.ManipulationDelta += ink_ManipulationDelta;
         }
 
-        private static async void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
+        public static Matrix3x2 GetScaleMatrix() => FlowMatrixHelper.GetScale(Scale);
+
+        private static void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            await Task.Delay(100);
+            // Return if scaling is too big or small
+            if ((e.Delta.Scale > 1 && Scale >= 2.5) || (e.Delta.Scale < 1 && Scale <= 0.2))
+                return;
 
-            //The coordinate of the lower right corner of the erased ink stoke
-            var erasedInkX = args.Strokes.ElementAt(0).BoundingRect.Bottom;
-            var erasedInkY = args.Strokes.ElementAt(0).BoundingRect.Right;
+            Scale *= e.Delta.Scale;
 
-            var XBound = inkCanvas.InkPresenter.StrokeContainer.BoundingRect.Bottom;
-            if (erasedInkX >= maxX && XBound < inkCanvas.ActualHeight + 100)
+            var scale = FlowMatrixHelper.GetScale(e);
+            var transform = FlowMatrixHelper.GetTranslation(e, Scroll.ZoomFactor);
+
+            List<Rect> individualBoundingRects = new List<Rect>();
+            var targetStrokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
+
+            foreach (var stroke in targetStrokes)
             {
-                if (XBound - 100 > originalX)
-                    inkCanvas.Height = XBound - 100;
-                else
-                    inkCanvas.Height = originalX;  //The size of InkCanvas shrinks to the original size.
+                individualBoundingRects.Add(stroke.BoundingRect);
 
-                maxX = inkCanvas.Height;
-            }
-
-            var YBound = inkCanvas.InkPresenter.StrokeContainer.BoundingRect.Right;
-            if (erasedInkY >= maxY && YBound < inkCanvas.ActualWidth + 100)
-            {
-                if (YBound - 100 > originalY)
+                var attr = stroke.DrawingAttributes;
+                // Fix for pencil stroke movement. Avoid being 1 stared in the store.
+                if (attr.Kind != InkDrawingAttributesKind.Pencil)
                 {
-                    inkCanvas.Width = YBound - 100;
+                    attr.PenTipTransform *= scale;
+                    stroke.DrawingAttributes = attr;
                 }
-                else
-                    inkCanvas.Width = originalY;
-
-                maxY = inkCanvas.Width;
+                stroke.PointTransform *= transform;
             }
-        }
 
-        private async static void adjustInkCanvasSize(InkStrokeInput sender, PointerEventArgs args)
-        {
-            await Task.Delay(100);
-
-            if (flag)
+            InkDrawingAttributes d = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
+            if (d.Kind != InkDrawingAttributesKind.Pencil)
             {
-                flag = false;
-                originalX = inkCanvas.ActualHeight;  //Get the original size 
-                originalY = inkCanvas.ActualWidth;
+                d.PenTipTransform *= scale;
+                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(d);
             }
-            var XBound = inkCanvas.InkPresenter.StrokeContainer.BoundingRect.Bottom;
-            if (XBound > maxX)
-                maxX = XBound;  //maxX and maxY always hold the maximum size of StrokeContainer
+            EraserTransform.ScaleX *= e.Delta.Scale;
+            EraserTransform.ScaleY *= e.Delta.Scale;
 
-            if (XBound > inkCanvas.ActualHeight - 1000)
-                inkCanvas.Height = XBound + 1000;
-
-            var YBound = inkCanvas.InkPresenter.StrokeContainer.BoundingRect.Right;
-            if (YBound > maxY)
-                maxY = YBound;
-
-            if (YBound > inkCanvas.ActualWidth - 1000)
-                inkCanvas.Width = YBound + 1000;
-        }
+            // Legacy code reference
+                /*foreach (var i in ContentCanvas.Children)
+                {
+                    var transformXXX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
+                                       scale *
+                                       Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
+                                       Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
+                    i.TransformMatrix *= ToMatrix4x4(transformXXX);
+                }*/
+            }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FlowBoard.Helpers;
+using FlowBoard.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,42 +103,44 @@ namespace FlowBoard.Controls
         }
 
         //Points on Cubic Bezier Curve siehe https://www.cubic.org/docs/bezier.htm
-        static Matrix3x2 OriginalTransform;
+        static Matrix3x2 InverseTransform;
+        static Matrix3x2 InverseScaleTransform;
         private void UnprocessedInput_PointerMoved(InkUnprocessedInput sender, PointerEventArgs args)
         {
-            TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth;
-            TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth;
+              TransformX = (float)args.CurrentPoint.RawPosition.X - 0.5 * EraserHelper.EraserWidth;
+              TransformY = (float)args.CurrentPoint.RawPosition.Y - 0.5 * EraserHelper.EraserWidth;
 
             //Handle stroke transformation
             foreach (InkStroke insr in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
             {
                 if (insr.Selected == true)
                 {
-                    Matrix3x2.Invert(insr.PointTransform, out OriginalTransform);
+                    Matrix3x2.Invert(insr.PointTransform, out InverseTransform);
+                    Matrix3x2.Invert(CanvasSizeService.GetScaleMatrix(), out InverseScaleTransform);
                 }
             }
             Point p1 = new Point()
             {
-                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) - 0.5 * EraserHelper.EraserWidth,
-                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) - 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + InverseTransform.Translation.X + InverseScaleTransform.Translation.X) - 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + InverseTransform.Translation.X + InverseScaleTransform.Translation.Y) - 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p2 = new Point()
             {
-                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) + 0.5 * EraserHelper.EraserWidth,
-                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) - 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + InverseTransform.Translation.X + InverseScaleTransform.Translation.X) + 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + InverseTransform.Translation.X + InverseScaleTransform.Translation.Y) - 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p3 = new Point()
             {
-                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) + 0.5 * EraserHelper.EraserWidth,
-                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) + 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + InverseTransform.Translation.X + InverseScaleTransform.Translation.X) + 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + InverseTransform.Translation.X + InverseScaleTransform.Translation.Y) + 0.5 * EraserHelper.EraserWidth,
             };
 
             Point p4 = new Point()
             {
-                X = (args.CurrentPoint.RawPosition.X + OriginalTransform.Translation.X) - 0.5 * EraserHelper.EraserWidth,
-                Y = (args.CurrentPoint.RawPosition.Y + OriginalTransform.Translation.Y) + 0.5 * EraserHelper.EraserWidth,
+                X = (args.CurrentPoint.RawPosition.X + InverseTransform.Translation.X + InverseScaleTransform.Translation.X) - 0.5 * EraserHelper.EraserWidth,
+                Y = (args.CurrentPoint.RawPosition.Y + InverseTransform.Translation.X + InverseScaleTransform.Translation.Y) + 0.5 * EraserHelper.EraserWidth,
             };
 
             inkCanvas.InkPresenter.StrokeContainer.SelectWithLine(p1, p2);
@@ -156,9 +159,6 @@ namespace FlowBoard.Controls
             inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = InkInputProcessingMode.Erasing;
         }
 
-        private void StrokeEraser_UnChecked(object sender, RoutedEventArgs e)
-        {
-            inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = InkInputProcessingMode.Inking;
-        }
+        private void StrokeEraser_UnChecked(object sender, RoutedEventArgs e) => inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = InkInputProcessingMode.Inking;
     }
 }

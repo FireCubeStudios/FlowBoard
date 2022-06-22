@@ -40,7 +40,7 @@ namespace FlowBoard
             this.InitializeComponent();
             inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = Windows.UI.Input.Inking.InkInputProcessingMode.Inking;
             inkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
-            CanvasSizeService.Initialize(inkCanvas);
+            CanvasSizeService.Initialize(inkCanvas, EraserTransform, Scroll);
             WindowService.Initialize(AppTitleBar);
             Pens.Add(new InkDrawingAttributes
             {
@@ -63,6 +63,8 @@ namespace FlowBoard
                 PenTip = PenTipShape.Circle
             });
             Window.Current.Activated += Current_Activated;
+            inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+            inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
 
         // Update the TitleBar based on the inactive/active state of the app
@@ -83,8 +85,8 @@ namespace FlowBoard
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-         //   inkCanvas.Height = (e.NewSize.Height < inkCanvas.Height) ? inkCanvas.Height : e.NewSize.Height;
-          //  inkCanvas.Width = (e.NewSize.Width < inkCanvas.Width) ? inkCanvas.Width : e.NewSize.Width;
+            inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+            inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
 
         private void PensList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -132,71 +134,6 @@ namespace FlowBoard
                 Size = new Windows.Foundation.Size(24, 24),
                 PenTip = PenTipShape.Circle
             });
-        }
-
-        public static Matrix4x4 ToMatrix4x4(Matrix3x2 matrix)
-        {
-            return new Matrix4x4(
-               matrix.M11, matrix.M12, 0, 0,
-               matrix.M21, matrix.M22, 0, 0,
-               0, 0, 1, 0,
-               matrix.M31, matrix.M32, 0, 1);
-        }
-        private double Scale = 1;
-        private void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            if (UIHelper.IsContentHovered == false)
-            {
-                // return if scaling is too big or small
-                if(e.Delta.Scale > 1 && Scale >= 2.5)
-                {
-                    return;
-                }
-                if (e.Delta.Scale < 1 && Scale <= 0.2)
-                {
-                    return;
-                }
-                Scale *= e.Delta.Scale;
-                var scale = Matrix3x2.CreateScale(e.Delta.Scale);
-                // Matrix3x2.CreateRotation((float)(e.Delta.Rotation / 180 * Math.PI)) *
-                var transform = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
-                                scale *
-                                Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
-                                Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
-                List<Rect> individualBoundingRects = new List<Rect>();
-
-                var targetStrokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
-
-                foreach (var stroke in targetStrokes)
-                {
-                    individualBoundingRects.Add(stroke.BoundingRect);
-
-                    var attr = stroke.DrawingAttributes;
-                    // Fix for pencil stroke movement blowup. Avoid being 1 stared in the store.
-                    if (attr.Kind != InkDrawingAttributesKind.Pencil)
-                    {
-                        attr.PenTipTransform *= scale;
-                        stroke.DrawingAttributes = attr;
-                    }
-                    stroke.PointTransform *= transform;
-                }
-                InkDrawingAttributes d = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
-                if (d.Kind != InkDrawingAttributesKind.Pencil)
-                {
-                    d.PenTipTransform *= scale;
-                    inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(d);
-                }
-                TranslateTransform_RectangleEraser.ScaleX *= e.Delta.Scale;
-                TranslateTransform_RectangleEraser.ScaleY *= e.Delta.Scale;
-                foreach (var i in ContentCanvas.Children)
-                {
-                    var transformXXX = Matrix3x2.CreateTranslation((float)-e.Position.X, (float)-e.Position.Y) * 
-                                       scale *
-                                       Matrix3x2.CreateTranslation((float)e.Position.X, (float)e.Position.Y) *
-                                       Matrix3x2.CreateTranslation((float)e.Delta.Translation.X, (float)e.Delta.Translation.Y);
-                    i.TransformMatrix *= ToMatrix4x4(transformXXX);
-                }
-            }
         }
     }
 }
