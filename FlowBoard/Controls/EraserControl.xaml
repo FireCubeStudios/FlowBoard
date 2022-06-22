@@ -10,7 +10,7 @@
     <StackPanel Orientation="Horizontal">
         <StackPanel>
             <Grid>
-            <ToggleButton x:Name="PointEraser" Style="{ThemeResource ExperimentalToolbarToggleButton}" Margin="4" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
+            <ToggleButton x:Name="PointEraser" Style="{ThemeResource ToolbarToggleButton}" Margin="4" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
                 <icons:FluentSymbolIcon Symbol="EraserSmall24" RenderTransformOrigin="0.5, 0.5">
                     <icons:FluentSymbolIcon.RenderTransform>
                         <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>

@@ -30,7 +30,7 @@
                     Width="20" 
                     Height="20"/>
                 <TextBlock x:Name="AppTitle"
-                    Text="New Project - FlowBoard"
+                    Text="New Project - FlowBoard FireCube's Edition"
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
