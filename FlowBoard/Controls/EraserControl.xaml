@@ -8,33 +8,31 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:icons="using:Fluent.Icons" xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
-        <StackPanel>
-            <Grid>
-            <ToggleButton x:Name="PointEraser" Style="{ThemeResource ToolbarToggleButton}" Margin="4" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
+        <StackPanel Orientation="Horizontal">
+            <ToggleButton x:Name="StrokeEraser" Unchecked="StrokeEraser_UnChecked" Checked="StrokeEraser_Checked">
+                <icons:FluentSymbolIcon Symbol="Eraser20"/>
+            </ToggleButton>
+            <ToggleButton x:Name="PointEraser" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
                 <icons:FluentSymbolIcon Symbol="EraserSmall24" RenderTransformOrigin="0.5, 0.5">
                     <icons:FluentSymbolIcon.RenderTransform>
                         <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>
                     </icons:FluentSymbolIcon.RenderTransform>
                 </icons:FluentSymbolIcon>
             </ToggleButton>
-                <Button Style="{ThemeResource ChevronButton}" HorizontalAlignment="Right" Canvas.ZIndex="3" Padding="0, 8, 0, 8" Height="32" Width="16" Margin="0, 0, 4, 0">
-                    <icons:FluentSymbolIcon Symbol="ChevronRight12"/>
-                    <Button.Flyout>
-                        <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
-                            <StackPanel Margin="12">
-                                <TextBlock FontWeight="SemiBold" Text="Eraser Width:"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Slider x:Name="EraserWidthSlider" x:FieldModifier="Public" Style="{ThemeResource GlowSlider}" VerticalAlignment="Center" Minimum="4" Maximum="100" Value="{x:Bind helpers:EraserHelper.EraserWidth, Mode=TwoWay}" Width="200"/>
-                                    <TextBlock FontSize="16" Margin="8, 0, 0, 0" VerticalAlignment="Center" Text="{x:Bind EraserWidthSlider.Value,Mode=OneWay}"/>
-                                </StackPanel>
+            <Button HorizontalAlignment="Right" Padding="0, 8, 0, 8" Height="32" Width="24" Margin="0, 0, 4, 0">
+                <icons:FluentSymbolIcon Symbol="ChevronUp12"/>
+                <Button.Flyout>
+                    <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
+                        <StackPanel Margin="12">
+                            <TextBlock FontWeight="SemiBold" Text="Eraser Width:"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Slider x:Name="EraserWidthSlider" x:FieldModifier="Public" Style="{ThemeResource GlowSlider}" VerticalAlignment="Center" Minimum="4" Maximum="100" Value="{x:Bind helpers:EraserHelper.EraserWidth, Mode=TwoWay}" Width="200"/>
+                                <TextBlock FontSize="16" Margin="8, 0, 0, 0" VerticalAlignment="Center" Text="{x:Bind EraserWidthSlider.Value,Mode=OneWay}"/>
                             </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-            </Grid>
-            <ToggleButton x:Name="StrokeEraser" Unchecked="StrokeEraser_UnChecked" Checked="StrokeEraser_Checked">
-                <icons:FluentSymbolIcon Symbol="Eraser20"/>
-            </ToggleButton>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
         </StackPanel>
     </StackPanel>
 </UserControl>

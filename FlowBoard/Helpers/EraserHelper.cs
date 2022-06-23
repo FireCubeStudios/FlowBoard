@@ -47,6 +47,15 @@ namespace FlowBoard.Helpers
 
             return bezierPt;
         }
+
+        /// <summary>
+        /// Gets all the points in the InkStroke segment
+        /// </summary>
+        /// <param name="startPt">The first ink point in the InkStroke.</param>
+        /// <param name="controlPt1">The first BezierControlPoint of the InkStrokeRenderingSegment.</param>
+        /// <param name="controlPt2">The second BezierControlPoint of the InkStrokeRenderingSegment.</param>
+        /// <param name="PositionPt">Position of the InkStrokeRenderingSegment.</param>
+        /// <returns>Returns a list of Point objects representing every Point in the InkStroke segment./returns>
         public static List<Point> PointsOnSegment(Point startPt, Point controlPt1, Point controlPt2, Point PositionPt)
         {
             List<Point> points = new List<Point>();
@@ -60,6 +69,11 @@ namespace FlowBoard.Helpers
             return points;
         }
 
+        /// <summary>
+        /// Gets all the points in the InkStroke
+        /// </summary>
+        /// <param name="inst">An InkStroke object.</param>
+        /// <returns>Returns a list of Point objects representing every Point in the InkStroke./returns>
         public static List<Point> GetPointsOnStroke(InkStroke inst)
         {
             List<InkStrokeRenderingSegment> renderingSegments = new List<InkStrokeRenderingSegment>();
@@ -75,6 +89,13 @@ namespace FlowBoard.Helpers
             return points;
         }
 
+        /// <summary>
+        /// Checks whether an ink stroke point is within the Eraser bounds
+        /// </summary>
+        /// <param name="ap">An ink stroke point.</param>
+        /// <param name="ec">Point with position of the cursor.</param>
+        /// <param name="eraserWidth">Width of the Eraser</param>
+        /// <returns>Returns bool if the ink stroke point is within the Eraser bounds./returns>
         public static bool PointInRectangle(Point ap, Point ec, int eraserwidth)
         {
             if ((ap.X >= (ec.X + InverseTransform.Translation.X) - eraserwidth &&
@@ -90,6 +111,12 @@ namespace FlowBoard.Helpers
             }
         }
 
+        /// <summary>
+        /// Erases points in the selected stroke
+        /// </summary>
+        /// <param name="args">A PointerEventArgs object.</param>
+        /// <param name="inkCanvas">An InkCanvas.</param>
+        /// <returns>Returns void./returns>
         public static void ErasePoints(PointerEventArgs args, InkCanvas inkCanvas)
         {
             List<InkStroke> SelectedStrokes = new List<InkStroke>();

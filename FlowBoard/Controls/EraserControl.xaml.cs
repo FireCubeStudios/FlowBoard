@@ -82,6 +82,11 @@ namespace FlowBoard.Controls
             inkCanvas.InkPresenter.UnprocessedInput.PointerMoved += UnprocessedInput_PointerMoved;
             inkCanvas.InkPresenter.UnprocessedInput.PointerReleased += UnprocessedInput_PointerReleased;
             CanvasVisibility = Visibility.Visible;
+            if (CanvasSelectionService.IsSelectionEnabled == true)
+            {
+                CanvasSelectionService.DisableSelectionSilently();
+                CanvasSelectionService.ClearSelection();
+            }
         }
         private void EraseByPoint_Button_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -91,6 +96,10 @@ namespace FlowBoard.Controls
             inkCanvas.InkPresenter.UnprocessedInput.PointerMoved -= UnprocessedInput_PointerMoved;
             inkCanvas.InkPresenter.UnprocessedInput.PointerReleased -= UnprocessedInput_PointerReleased;
             CanvasVisibility = Visibility.Collapsed;
+            if (CanvasSelectionService.IsSelectionEnabled == true)
+            {
+                CanvasSelectionService.EnableSelectionSilently();
+            }
         }
 
         private void UnprocessedInput_PointerReleased(InkUnprocessedInput sender, PointerEventArgs args) => EraserVisibility = Visibility.Collapsed;

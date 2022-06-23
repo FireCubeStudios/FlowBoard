@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FlowBoard.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -41,6 +43,7 @@ namespace FlowBoard.Controls
         {
             inkPresenterRuler = new InkPresenterRuler(inkCanvas.InkPresenter);
             inkPresenterProtractor = new InkPresenterProtractor(inkCanvas.InkPresenter);
+            Bindings.Update();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Fluent.Icons;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -13,6 +14,9 @@ namespace FlowBoard.Helpers
 {
     public class UIHelper
     {
+        // Whether the InkCanvas can scale, pan. Disabled when InkStroke is selected
+        public static bool IsContentHovered = false;
+
         public static string GetTitleInfo(Single zoom, double width, double height) => $"SAVED  · {Math.Round(zoom * 10, 0)}%  · {Math.Round(width, 0)} x {Math.Round(height, 0)}";
 
         public static FluentSymbol PenToIcon(InkDrawingAttributes ink)
@@ -29,6 +33,8 @@ namespace FlowBoard.Helpers
 
         public static CornerRadius TipToRadius(int index) => index == 0 ? new CornerRadius(12, 12, 12, 12) : new CornerRadius(1, 1, 1, 1);
 
-        public static double PenSizeToUISize(double size) => (0.2 * size) + 4; 
+        public static double PenSizeToUISize(double size) => (0.2 * size) + 4;
+
+        public static bool Invert(bool e) => !e;
     }
 }

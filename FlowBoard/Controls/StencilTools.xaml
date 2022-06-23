@@ -8,12 +8,29 @@
     xmlns:icons="using:Fluent.Icons"
     mc:Ignorable="d"
     Loaded="StencilTools_Loaded">
-    <StackPanel>
+    <StackPanel Orientation="Horizontal">
         <ToggleButton x:Name="RulerToggle" Unchecked="RulerToggle_Checked" Checked="RulerToggle_Checked">
             <icons:FluentSymbolIcon Symbol="Ruler20" Margin="0, 0, 2, 0"/>
         </ToggleButton>
         <ToggleButton x:Name="ProtractorToggle" Unchecked="ProtractorToggle_Checked" Checked="ProtractorToggle_Checked" Width="44">
             <FontIcon FontFamily="Segoe MDL2 Assets" Foreground="{ThemeResource HvidSortBrush}" FontSize="16" Glyph="&#xF0B4;" Margin="1, 1, 0, 0"/>
         </ToggleButton>
+        <Button HorizontalAlignment="Right" Padding="0, 8, 0, 8" Height="32" Width="24" Margin="0, 0, 4, 0">
+            <icons:FluentSymbolIcon Symbol="ChevronUp12"/>
+            <Button.Flyout>
+                <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
+                    <StackPanel Orientation="Horizontal" Margin="12">
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Text="Ruler Ticks:"/>
+                            <ToggleSwitch IsOn="{x:Bind inkPresenterRuler.AreTickMarksVisible, Mode=TwoWay}" Style="{ThemeResource GlowSwitch}" OnContent="On" OffContent="Off"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Text="Protractor Ticks:"/>
+                            <ToggleSwitch IsOn="{x:Bind inkPresenterProtractor.AreTickMarksVisible, Mode=TwoWay}" Style="{ThemeResource GlowSwitch}" OnContent="On" OffContent="Off"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
     </StackPanel>
 </UserControl>

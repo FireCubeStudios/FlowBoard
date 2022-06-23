@@ -1,0 +1,13 @@
+﻿<UserControl
+    x:Class="FlowBoard.Controls.SelectionLassoControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:helpers="using:FlowBoard.Helpers"
+    mc:Ignorable="d">
+    <Grid Background="Transparent" PointerEntered="selection_PointerEntered" PointerExited="selection_PointerExited" ManipulationMode="All" ManipulationDelta="selection_ManipulationDelta">
+        <Rectangle Stroke="{x:Bind helpers:AccentHelper.GetAccentColorLight1(), Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" StrokeThickness="4" StrokeDashArray="5, 2"/>
+    </Grid>
+</UserControl>

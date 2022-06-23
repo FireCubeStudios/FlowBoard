@@ -40,8 +40,10 @@ namespace FlowBoard
             this.InitializeComponent();
             inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = Windows.UI.Input.Inking.InkInputProcessingMode.Inking;
             inkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
-            CanvasSizeService.Initialize(inkCanvas, EraserTransform, Scroll);
+            CanvasSizeService.Initialize(inkCanvas, selectionCanvas, EraserTransform/*, Scroll*/);
             WindowService.Initialize(AppTitleBar);
+            CanvasSelectionService.Initialize(inkCanvas, selectionCanvas);
+            SelectionToggle.IsChecked = true;
             Pens.Add(new InkDrawingAttributes
             {
                 Color = Windows.UI.Colors.White,
@@ -63,8 +65,8 @@ namespace FlowBoard
                 PenTip = PenTipShape.Circle
             });
             Window.Current.Activated += Current_Activated;
-            inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
-            inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
+           // inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+           // inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
 
         // Update the TitleBar based on the inactive/active state of the app
@@ -85,8 +87,8 @@ namespace FlowBoard
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
-            inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
+          //  inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
+           // inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
 
         private void PensList_SelectionChanged(object sender, SelectionChangedEventArgs e)
