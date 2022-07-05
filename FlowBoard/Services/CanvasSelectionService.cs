@@ -1,4 +1,5 @@
-﻿using FlowBoard.Controls;
+﻿using FlowBoard.Classes;
+using FlowBoard.Controls;
 using FlowBoard.Helpers;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace FlowBoard.Services
 {
     public class CanvasSelectionService
     {
+        private static SelectionLassoControl BoundingLasso;
         private static Polyline lasso;
         private static Rect boundingRect;
         private static InkCanvas inkCanvas;
@@ -142,7 +144,7 @@ namespace FlowBoard.Services
             // within the lasso area.
             if (!((boundingRect.Width == 0) || (boundingRect.Height == 0) || boundingRect.IsEmpty))
             {
-                var BoundingLasso = new SelectionLassoControl()
+                BoundingLasso = new SelectionLassoControl()
                 {
                     Width = boundingRect.Width,
                     Height = boundingRect.Height,
@@ -158,6 +160,22 @@ namespace FlowBoard.Services
         // Clean up selection UI.
         public static void ClearSelection()
         {
+            try
+            {
+                List<InkStroke> MovedStrokes = new List<InkStroke>();
+                foreach (var i in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
+                {
+                    if (i.Selected == true)
+                    {
+                        MovedStrokes.Add(i);
+                    }
+                }
+                UndoRedoService.AddUndoAction(new StrokeMovedAction(MovedStrokes, BoundingLasso.AggregateTransform));
+            }
+            catch
+            {
+
+            }
             var strokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
             foreach (var stroke in strokes)
             {

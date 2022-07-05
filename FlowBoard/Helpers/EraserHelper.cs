@@ -1,4 +1,5 @@
-﻿using FlowBoard.Services;
+﻿using FlowBoard.Classes;
+using FlowBoard.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -195,33 +196,36 @@ namespace FlowBoard.Helpers
                 }
                 // Draw the remaining strokes
                 if (PointsA.Count > 0 || PointsB.Count > 0)
+                {
+                    var strokeBuilder = new InkStrokeBuilder();
+                    strokeBuilder.SetDefaultDrawingAttributes(ida);
+                    //  Draw the first stroke A
+                    if (PointsA.Count > 0)
                     {
-                        var strokeBuilder = new InkStrokeBuilder();
-                        strokeBuilder.SetDefaultDrawingAttributes(ida);
-                        //  Draw the first stroke A
-                        if (PointsA.Count > 0)
-                        {
-                            InkStroke stkA = strokeBuilder.CreateStroke(PointsA);
-                            //   stkA.PointTransform = OriginalTransform;
+                        InkStroke stkA = strokeBuilder.CreateStroke(PointsA);
 
-                            inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkA);
-                            //  Draw the stroke B if it exists
-                            if (PointsB.Count > 0)
-                            {
-                                InkStroke stkB = strokeBuilder.CreateStroke(PointsB);
-                                //  stkB.PointTransform = OriginalTransform;
-                                inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkB);
-                            }
-                        }
+                        inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkA);
                         //  Draw the stroke B if it exists
-                        else if (PointsB.Count > 0)
+                        if (PointsB.Count > 0)
                         {
                             InkStroke stkB = strokeBuilder.CreateStroke(PointsB);
-                            // stkB.PointTransform = OriginalTransform;
                             inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkB);
+                            UndoRedoService.DeletedStrokes.Add(SelectedStrokes[i]);
+                            UndoRedoService.AddUndoAction(new StrokePortionErasedAction(stkA, stkB, UndoRedoService.DeletedStrokes.Count - 1));
                         }
+                        UndoRedoService.DeletedStrokes.Add(SelectedStrokes[i]);
+                        UndoRedoService.AddUndoAction(new StrokePortionErasedAction(stkA, UndoRedoService.DeletedStrokes.Count - 1));
                     }
-                    inkCanvas.InkPresenter.StrokeContainer.DeleteSelected();
+                    //  Draw the stroke B if it exists
+                    else if (PointsB.Count > 0)
+                    {
+                        InkStroke stkB = strokeBuilder.CreateStroke(PointsB);
+                        inkCanvas.InkPresenter.StrokeContainer.AddStroke(stkB);
+                        UndoRedoService.DeletedStrokes.Add(SelectedStrokes[i]);
+                        UndoRedoService.AddUndoAction(new StrokePortionErasedAction(stkB, UndoRedoService.DeletedStrokes.Count - 1));
+                    }
+                }
+                inkCanvas.InkPresenter.StrokeContainer.DeleteSelected();
             }
         }
     }

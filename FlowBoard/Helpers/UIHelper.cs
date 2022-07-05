@@ -6,9 +6,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Input.Inking;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace FlowBoard.Helpers
 {
@@ -36,5 +38,34 @@ namespace FlowBoard.Helpers
         public static double PenSizeToUISize(double size) => (0.2 * size) + 4;
 
         public static bool Invert(bool e) => !e;
+
+        public static bool NullBool(bool? e) => (bool)e;
+
+        public static CornerRadius PaneToRadius(bool e) => e ? new CornerRadius(0, 8, 0, 0) : new CornerRadius(0);
+
+        public static Thickness IndexToThickness(int index) => index == 0 ? new Thickness(2) : new Thickness(0);
+
+        public static SolidColorBrush IndexToColor(int index) => index switch
+        {
+            0 => new SolidColorBrush(Colors.Transparent),
+            1 => new SolidColorBrush(Colors.Black),
+            2 => new SolidColorBrush(Colors.White),
+            3 => new SolidColorBrush(Colors.Wheat),
+            _ => new SolidColorBrush(Colors.Transparent)
+        };
+
+        public static int ColorToIndex(Color color)
+        {
+            if(color == Colors.Transparent)
+                return 0;
+            else if (color == Colors.Black)
+                return 1;
+            else if (color == Colors.White)
+                return 2;
+            else if (color == Colors.Wheat)
+                return 3;
+            else
+                return 0;
+        }
     }
 }

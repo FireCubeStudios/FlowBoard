@@ -44,7 +44,6 @@ namespace FlowBoard.Services
 
             var scale = FlowMatrixHelper.GetScale(e);
             var transform = FlowMatrixHelper.GetTranslation(e);
-
             List<Rect> individualBoundingRects = new List<Rect>();
             var targetStrokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
 
@@ -64,6 +63,19 @@ namespace FlowBoard.Services
                     }
                     stroke.PointTransform *= transform;
                 }
+            }
+            foreach (var stroke in UndoRedoService.DeletedStrokes)
+            {
+                individualBoundingRects.Add(stroke.BoundingRect);
+
+                var attr = stroke.DrawingAttributes;
+                // Fix for pencil stroke movement. Avoid being 1 stared in the store.
+                if (attr.Kind != InkDrawingAttributesKind.Pencil)
+                {
+                    attr.PenTipTransform *= scale;
+                    stroke.DrawingAttributes = attr;
+                }
+                stroke.PointTransform *= transform;
             }
 
             InkDrawingAttributes d = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
@@ -98,7 +110,6 @@ namespace FlowBoard.Services
 
             var scaleMatrix = FlowMatrixHelper.GetScale(scale);
             var transform = FlowMatrixHelper.GetTranslation(e, scale, e.GetCurrentPoint(sender as Canvas));
-
             List<Rect> individualBoundingRects = new List<Rect>();
             var targetStrokes = inkCanvas.InkPresenter.StrokeContainer.GetStrokes();
 
@@ -118,6 +129,19 @@ namespace FlowBoard.Services
                     }
                     stroke.PointTransform *= transform;
                 }
+            }
+            foreach(var stroke in UndoRedoService.DeletedStrokes)
+            {
+                individualBoundingRects.Add(stroke.BoundingRect);
+
+                var attr = stroke.DrawingAttributes;
+                // Fix for pencil stroke movement. Avoid being 1 stared in the store.
+                if (attr.Kind != InkDrawingAttributesKind.Pencil)
+                {
+                    attr.PenTipTransform *= scaleMatrix;
+                    stroke.DrawingAttributes = attr;
+                }
+                stroke.PointTransform *= transform;
             }
 
             InkDrawingAttributes d = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();

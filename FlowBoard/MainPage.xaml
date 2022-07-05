@@ -9,10 +9,16 @@
     xmlns:icons="using:Fluent.Icons"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls" 
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
-    xmlns:UserControls="using:FlowBoard.Controls" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media" xmlns:inking="using:Windows.UI.Input.Inking" xmlns:Service="using:FlowBoard.Services"
-    controls:BackdropMaterial.ApplyToRootOrPageBackground="True"
-    RequestedTheme="Dark"
-    SizeChanged="Page_SizeChanged">
+    xmlns:UserControls="using:FlowBoard.Controls" 
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media" 
+    xmlns:inking="using:Windows.UI.Input.Inking" 
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
+    xmlns:Service="using:FlowBoard.Services" 
+    xmlns:ani="using:Microsoft.Toolkit.Uwp.UI.Animations" 
+    xmlns:helpers="using:FlowBoard.Helpers"
+    controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid>
         <Border x:Name="AppTitleBar"
@@ -36,100 +42,124 @@
                     Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
         </Border>
-        <Grid x:Name="ThemeGrid" Background="Black" VerticalAlignment="Stretch" Margin="0, 32, 0, 0" HorizontalAlignment="Stretch">
-            <Grid>
-                <Canvas x:Name="selectionCanvas" Background="Black" ManipulationMode="All" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}"/>
-                <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False"/>
-                <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
-                    <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
+        <SplitView x:Name="Settings" PaneBackground="Transparent"
+           Margin="0, 32, 0, 0" IsPaneOpen="{x:Bind helpers:UIHelper.NullBool(SettingsButton.IsChecked), Mode=OneWay}" OpenPaneLength="400" PanePlacement="Right" DisplayMode="Inline">
+            <SplitView.Pane>
+                <StackPanel Padding="16">
+                    <TextBlock FontWeight="SemiBold" FontSize="28">Settings</TextBlock>
+                    <controls:RadioButtons x:Name="Backgrounds">
+                        <RadioButton Style="{ThemeResource GlowRadio}" Content="Mica"/>
+                        <RadioButton Foreground="Black" Style="{ThemeResource GlowThemeRadio}" Content="Black"/>
+                        <RadioButton Foreground="White" Style="{ThemeResource GlowThemeRadio}" Content="White"/>
+                        <RadioButton Foreground="Wheat" Style="{ThemeResource GlowThemeRadio}" Content="Wheat"/>
+                    </controls:RadioButtons>
+                </StackPanel>
+            </SplitView.Pane>
+            <Grid x:Name="ThemeGrid" BorderThickness="{x:Bind helpers:UIHelper.IndexToThickness(Backgrounds.SelectedIndex), Mode=OneWay}" BorderBrush="{ThemeResource MicaBorderBrush}" CornerRadius="{x:Bind helpers:UIHelper.PaneToRadius(Settings.IsPaneOpen), Mode=OneWay}" Background="{x:Bind helpers:UIHelper.IndexToColor(Backgrounds.SelectedIndex), Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Grid>
+                    <Border CornerRadius="{x:Bind helpers:UIHelper.PaneToRadius(Settings.IsPaneOpen), Mode=OneWay}">
+                        <Canvas x:Name="selectionCanvas" Background="{x:Bind ThemeGrid.Background, Mode=OneWay}" ManipulationMode="All" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}"/>
+                    </Border>
+                    <InkCanvas x:Name="inkCanvas" IsHitTestVisible="False"/>
+                    <Canvas IsHitTestVisible="False" Visibility="{x:Bind EraserButtons.CanvasVisibility, Mode=OneWay}" Canvas.ZIndex="3" Background="Transparent" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}">
+                        <toolkit:DropShadowPanel Visibility="{x:Bind EraserButtons.EraserVisibility, Mode=OneWay}" BlurRadius="16.0" ShadowOpacity="0.93"
                         OffsetX="0" OffsetY="0.0" IsMasked="True" Color="{ThemeResource SystemAccentColorLight2}">
-                        <toolkit:DropShadowPanel.RenderTransform>
-                            <CompositeTransform x:Name="EraserTransform" TranslateX="{x:Bind EraserButtons.TransformX, Mode=OneWay}" TranslateY="{x:Bind EraserButtons.TransformY, Mode=OneWay}"/>
-                        </toolkit:DropShadowPanel.RenderTransform>
-                        <Grid CornerRadius="2" Height="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Width="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Background="{ThemeResource SystemAccentColorLight1}"/>
-                    </toolkit:DropShadowPanel>
-                </Canvas>
-            </Grid>
-            <toolkit:DropShadowPanel BlurRadius="10.0" ShadowOpacity="0.4"
-                OffsetX="0" Canvas.ZIndex="3" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" OffsetY="0.0" IsMasked="True" Color="Black">
-                <Grid CornerRadius="8" Background="{ThemeResource MicaBrush}" BorderThickness="1" BorderBrush="{ThemeResource MicaBorderBrush}">
-                    <Grid.Resources>
-                        <Style TargetType="Button" BasedOn="{StaticResource ToolbarButton}">
-                            <Setter Property="Margin" Value="4"/>
-                            <Setter Property="Height" Value="32"/>
-                            <Setter Property="Width" Value="44"/>
-                        </Style>
-                        <Style TargetType="ToggleButton" BasedOn="{StaticResource ToolbarToggleButton}">
-                            <Setter Property="Margin" Value="4"/>
-                            <Setter Property="Height" Value="32"/>
-                            <Setter Property="Width" Value="44"/>
-                            <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
-                        </Style>
-                    </Grid.Resources>
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto">
-                        <StackPanel VerticalAlignment="Center" Padding="4" CornerRadius="8" Orientation="Horizontal">
-                            <StackPanel.Background>
-                                <media:BackdropBlurBrush Amount="240"/>
-                            </StackPanel.Background>
-                            <UserControls:UndoRedoControl/>
-                            <AppBarSeparator/>
-                            <ListView x:Name="PensList" AllowDrop="True" CanDragItems="True" CanReorderItems="True" SelectionMode="Single" SelectedIndex="0" SelectionChanged="PensList_SelectionChanged" ItemsSource="{x:Bind Pens, Mode=OneWay}">
-                                <ListView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ListView.ItemsPanel>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="inking:InkDrawingAttributes">
-                                        <UserControls:PenControl DrawingAttributes="{x:Bind }" PropertyChanged="PenControl_PropertyChanged"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                            <Button Style="{ThemeResource ToolbarButton}">
-                                <StackPanel>
-                                    <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="Add20"/>
-                                </StackPanel>
-                                <Button.Flyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="Add pen" Click="AddPen_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <icons:FluentIconElement Symbol="InkingTool20"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="Add highlighter" Click="AddHighlighter_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <icons:FluentIconElement Symbol="Highlight20"/>
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
-                            <AppBarSeparator/>
-                            <StackPanel>
-                                <UserControls:EraserControl x:Name="EraserButtons" inkCanvas="{x:Bind inkCanvas, Mode=OneWay}"/>
-                                <UserControls:StencilTools inkCanvas="{x:Bind inkCanvas, Mode=OneWay}"/>
-                            </StackPanel>
-                            <AppBarSeparator/>
-                            <StackPanel Orientation="Horizontal">
-                                <ToggleButton x:Name="SelectionToggle" Checked="{x:Bind Service:CanvasSelectionService.EnableSelection}" Unchecked="{x:Bind Service:CanvasSelectionService.DisableSelection}" Style="{ThemeResource ToolbarToggleButton}">
-                                    <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="SelectObject24"/>
-                                </ToggleButton>
-                                <StackPanel>
-                                    <UserControls:ClipboardTools inkCanvas="{x:Bind inkCanvas}"/>
-                                    <UserControls:InputTools inkCanvas="{x:Bind inkCanvas}"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <AppBarSeparator/>
-                            <StackPanel>
-                                <Button>
-                                    <icons:FluentSymbolIcon Symbol="Home20" Margin="0, 0, 1, 0"/>
-                                </Button>
-                                <Button Style="{ThemeResource SettingsToolbarButton}" Margin="4" Width="44"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
+                            <toolkit:DropShadowPanel.RenderTransform>
+                                <CompositeTransform x:Name="EraserTransform" TranslateX="{x:Bind EraserButtons.TransformX, Mode=OneWay}" TranslateY="{x:Bind EraserButtons.TransformY, Mode=OneWay}"/>
+                            </toolkit:DropShadowPanel.RenderTransform>
+                            <Grid CornerRadius="2" Height="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Width="{x:Bind EraserButtons.EraserWidthSlider.Value, Mode=OneWay}" Background="{ThemeResource SystemAccentColorLight1}"/>
+                        </toolkit:DropShadowPanel>
+                    </Canvas>
                 </Grid>
-            </toolkit:DropShadowPanel>
-        </Grid>
+                <toolkit:DropShadowPanel BlurRadius="10.0" ShadowOpacity="0.4"
+                OffsetX="0" Canvas.ZIndex="3" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" OffsetY="0.0" IsMasked="True" Color="Black">
+                    <Grid CornerRadius="8" Background="{ThemeResource MicaBrush}" BorderThickness="1" BorderBrush="{ThemeResource MicaBorderBrush}">
+                        <Grid.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource ToolbarButton}">
+                                <Setter Property="Margin" Value="4"/>
+                                <Setter Property="Height" Value="32"/>
+                                <Setter Property="Width" Value="44"/>
+                                <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
+                            </Style>
+                            <Style TargetType="ToggleButton" BasedOn="{StaticResource ToolbarToggleButton}">
+                                <Setter Property="Margin" Value="4"/>
+                                <Setter Property="Height" Value="32"/>
+                                <Setter Property="Width" Value="44"/>
+                                <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
+                            </Style>
+                        </Grid.Resources>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto">
+                            <StackPanel VerticalAlignment="Center" Padding="4" CornerRadius="8" Orientation="Horizontal">
+                                <StackPanel.Background>
+                                    <media:BackdropBlurBrush Amount="240"/>
+                                </StackPanel.Background>
+                                <StackPanel>
+                                    <Button x:Name="UndoButton" IsEnabled="False" Height="32" Width="44" Margin="4">
+                                        <icons:FluentSymbolIcon Symbol="ArrowUndo20"/>
+                                    </Button>
+                                    <Button x:Name="RedoButton" IsEnabled="False" Height="32" Width="44" Margin="4">
+                                        <icons:FluentSymbolIcon Symbol="ArrowRedo20"/>
+                                    </Button>
+                                </StackPanel>
+                                <AppBarSeparator/>
+                                <ListView x:Name="PensList" AllowDrop="True" CanDragItems="True" CanReorderItems="True" SelectionMode="Single" SelectedIndex="0" SelectionChanged="PensList_SelectionChanged" ItemsSource="{x:Bind Pens, Mode=OneWay}">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="inking:InkDrawingAttributes">
+                                            <UserControls:PenControl DrawingAttributes="{x:Bind }" PropertyChanged="PenControl_PropertyChanged"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <Button Style="{ThemeResource ToolbarButton}">
+                                    <StackPanel>
+                                        <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="Add20"/>
+                                    </StackPanel>
+                                    <Button.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="Add pen" Click="AddPen_Click">
+                                                <MenuFlyoutItem.Icon>
+                                                    <icons:FluentIconElement Symbol="InkingTool20"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Text="Add highlighter" Click="AddHighlighter_Click">
+                                                <MenuFlyoutItem.Icon>
+                                                    <icons:FluentIconElement Symbol="Highlight20"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <AppBarSeparator/>
+                                <StackPanel>
+                                    <UserControls:EraserControl x:Name="EraserButtons" inkCanvas="{x:Bind inkCanvas, Mode=OneWay}"/>
+                                    <UserControls:StencilTools inkCanvas="{x:Bind inkCanvas, Mode=OneWay}"/>
+                                </StackPanel>
+                                <AppBarSeparator/>
+                                <StackPanel Orientation="Horizontal">
+                                    <ToggleButton x:Name="SelectionToggle" Checked="{x:Bind Service:CanvasSelectionService.EnableSelection}" Unchecked="{x:Bind Service:CanvasSelectionService.DisableSelection}" Style="{ThemeResource ToolbarToggleButton}">
+                                        <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="SelectObject24"/>
+                                    </ToggleButton>
+                                    <StackPanel>
+                                        <UserControls:ClipboardTools inkCanvas="{x:Bind inkCanvas}"/>
+                                        <UserControls:InputTools inkCanvas="{x:Bind inkCanvas}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <AppBarSeparator/>
+                                <StackPanel>
+                                    <Button Click="Button_Click">
+                                        <icons:FluentSymbolIcon Symbol="Home20" Margin="0, 0, 1, 0"/>
+                                    </Button>
+                                    <ToggleButton x:Name="SettingsButton" Style="{ThemeResource SettingsToolbarToggleButton}" Padding="0" Foreground="{ThemeResource HvidSortBrush}" Margin="4" Height="32" Width="44"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </toolkit:DropShadowPanel>
+            </Grid>
+        </SplitView>
     </Grid>
 </Page>

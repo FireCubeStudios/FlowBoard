@@ -24,6 +24,8 @@ using FlowBoard.Controls;
 using System.Collections.ObjectModel;
 using System.Numerics;
 using FlowBoard.Helpers;
+using FlowBoard.Classes;
+using static FlowBoard.Classes.FileClass;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -38,35 +40,45 @@ namespace FlowBoard
         public MainPage()
         {
             this.InitializeComponent();
-            inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = Windows.UI.Input.Inking.InkInputProcessingMode.Inking;
+            inkCanvas.InkPresenter.InputProcessingConfiguration.Mode = InkInputProcessingMode.Inking;
             inkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
             CanvasSizeService.Initialize(inkCanvas, selectionCanvas, EraserTransform/*, Scroll*/);
             WindowService.Initialize(AppTitleBar);
             CanvasSelectionService.Initialize(inkCanvas, selectionCanvas);
+            UndoRedoService.Initialize(UndoButton, RedoButton, inkCanvas);
             SelectionToggle.IsChecked = true;
-            Pens.Add(new InkDrawingAttributes
-            {
-                Color = Windows.UI.Colors.White,
-                DrawAsHighlighter = false,
-                FitToCurve = true,
-                IgnorePressure = false,
-                IgnoreTilt = false,
-                Size = new Windows.Foundation.Size(8, 8),
-                PenTip = PenTipShape.Circle
-            });
-            Pens.Add(new InkDrawingAttributes
-            {
-                Color = Windows.UI.Colors.Yellow,
-                DrawAsHighlighter = true,
-                FitToCurve = true,
-                IgnorePressure = false,
-                IgnoreTilt = false,
-                Size = new Windows.Foundation.Size(24, 24),
-                PenTip = PenTipShape.Circle
-            });
             Window.Current.Activated += Current_Activated;
-           // inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
-           // inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            ProjectClass Project = e.Parameter as ProjectClass ?? null;
+            if (ReferenceEquals(Project, null))
+            {
+                AddPen(Colors.White);
+                AddHighlighter();
+                Backgrounds.SelectedIndex = 1;
+            }
+            else
+            {
+                AppTitle.Text = Project.Name + " - FlowBoard FireCube's Edition";
+                Backgrounds.SelectedIndex = UIHelper.ColorToIndex(Project.File.CanvasColor);
+                if(Project.File.CanvasColor == Colors.Black)
+                {
+                    AddPen(Colors.White);
+                    AddHighlighter();
+                }
+                else
+                {
+                    AddPen(Colors.Black);
+                    AddHighlighter();
+                }
+                foreach (var i in Project.File.InkStrokes)
+                {
+                    InkHelper.CreateStroke(i, inkCanvas);
+                }
+            }
         }
 
         // Update the TitleBar based on the inactive/active state of the app
@@ -83,12 +95,6 @@ namespace FlowBoard
             {
                 AppTitle.Foreground = defaultForegroundBrush;
             }
-        }
-
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-          //  inkCanvas.Height = this.ActualHeight / Scroll.MinZoomFactor;
-           // inkCanvas.Width = this.ActualWidth / Scroll.MinZoomFactor;
         }
 
         private void PensList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -110,32 +116,54 @@ namespace FlowBoard
             inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(d);
         }
 
-        private void AddPen_Click(object sender, RoutedEventArgs e)
+        private void AddPen_Click(object sender, RoutedEventArgs e) => AddPen(Colors.White);
+
+        public void AddPen(Color color)
         {
             Pens.Add(new InkDrawingAttributes
             {
-                Color = Windows.UI.Colors.White,
+                Color = color,
                 DrawAsHighlighter = false,
                 FitToCurve = true,
                 IgnorePressure = false,
                 IgnoreTilt = false,
-                Size = new Windows.Foundation.Size(12, 12),
+                Size = new Size(12, 12),
                 PenTip = PenTipShape.Circle
             });
         }
 
-        private void AddHighlighter_Click(object sender, RoutedEventArgs e)
+        private void AddHighlighter_Click(object sender, RoutedEventArgs e) => AddHighlighter();
+
+        public void AddHighlighter()
         {
             Pens.Add(new InkDrawingAttributes
             {
-                Color = Windows.UI.Colors.Yellow,
+                Color = Colors.Yellow,
                 DrawAsHighlighter = true,
                 FitToCurve = true,
                 IgnorePressure = false,
                 IgnoreTilt = false,
-                Size = new Windows.Foundation.Size(24, 24),
+                Size = new Size(24, 24),
                 PenTip = PenTipShape.Circle
             });
+        }
+        private async void Button1_Click(object sender, RoutedEventArgs e)
+        {
+            FileClass file = await FileHelper.OpenFilePicker();
+            ThemeGrid.Background = new SolidColorBrush(file.CanvasColor);
+            foreach(var i in file.InkStrokes)
+            {
+                InkHelper.CreateStroke(i, inkCanvas);
+            }
+        }
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            List<FileInkStroke> strokes = new List<FileInkStroke>();
+            foreach(var i in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
+            {
+                strokes.Add(FileHelper.ConvertToFileInkStroke(i));
+            }
+            await FileHelper.SaveNewFile(((SolidColorBrush)ThemeGrid.Background).Color, strokes);
         }
     }
 }

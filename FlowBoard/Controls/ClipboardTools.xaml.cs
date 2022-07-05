@@ -1,4 +1,5 @@
-﻿using FlowBoard.Services;
+﻿using FlowBoard.Classes;
+using FlowBoard.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,22 +29,25 @@ namespace FlowBoard.Controls
         public static readonly DependencyProperty inkCanvasProperty =
                    DependencyProperty.Register("inkCanvas", typeof(InkCanvas), typeof(EraserControl), null);
 
-        public ClipboardTools()
-        {
-            this.InitializeComponent();
-        }
+        public ClipboardTools() => this.InitializeComponent();
+
         private void cutButton_Click(object sender, RoutedEventArgs e)
         {
             inkCanvas.InkPresenter.StrokeContainer.CopySelectedToClipboard();
+            foreach (var i in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
+            {
+                if (i.Selected == true)
+                {
+                    UndoRedoService.DeletedStrokes.Add(i);
+                    UndoRedoService.AddUndoAction(new StrokeAction(ActionType.StrokeErased, i, UndoRedoService.DeletedStrokes.Count - 1));
+                }
+            }
             inkCanvas.InkPresenter.StrokeContainer.DeleteSelected();
             CanvasSelectionService.ClearSelection();
         }
 
         private void copyButton_Click(object sender, RoutedEventArgs e) => inkCanvas.InkPresenter.StrokeContainer.CopySelectedToClipboard();
 
-        private void pasteButton_Click(object sender, RoutedEventArgs e)
-        {
-                inkCanvas.InkPresenter.StrokeContainer.PasteFromClipboard(new Point(0, 0));
-        }
+        private void pasteButton_Click(object sender, RoutedEventArgs e) => inkCanvas.InkPresenter.StrokeContainer.PasteFromClipboard(new Point(0, 0));
     }
 }

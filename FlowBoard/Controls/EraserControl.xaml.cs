@@ -95,7 +95,7 @@ namespace FlowBoard.Controls
             inkCanvas.InkPresenter.UnprocessedInput.PointerPressed -= UnprocessedInput_PointerPressed;
             inkCanvas.InkPresenter.UnprocessedInput.PointerMoved -= UnprocessedInput_PointerMoved;
             inkCanvas.InkPresenter.UnprocessedInput.PointerReleased -= UnprocessedInput_PointerReleased;
-            CanvasVisibility = Visibility.Collapsed;
+          CanvasVisibility = Visibility.Collapsed;
             if (CanvasSelectionService.IsSelectionEnabled == true)
             {
                 CanvasSelectionService.EnableSelectionSilently();

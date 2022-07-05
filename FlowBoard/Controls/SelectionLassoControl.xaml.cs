@@ -1,11 +1,15 @@
-﻿using FlowBoard.Helpers;
+﻿using FlowBoard.Classes;
+using FlowBoard.Helpers;
+using FlowBoard.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Input.Inking;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -20,6 +24,7 @@ namespace FlowBoard.Controls
 {
     public sealed partial class SelectionLassoControl : UserControl
     {
+        public Point AggregateTransform;
         public InkCanvas inkCanvas
         {
             get { return (InkCanvas)GetValue(inkCanvasProperty); }
@@ -27,20 +32,6 @@ namespace FlowBoard.Controls
         }
         public static readonly DependencyProperty inkCanvasProperty =
                    DependencyProperty.Register("inkCanvas", typeof(InkCanvas), typeof(StencilTools), null);
-        public double LassoWidth
-        {
-            get { return (double)GetValue(LassoWidthProperty); }
-            set { SetValue(LassoWidthProperty, value); }
-        }
-        public static readonly DependencyProperty LassoWidthProperty =
-                   DependencyProperty.Register("LassoWidth", typeof(double), typeof(SelectionLassoControl), null);
-        public double Lassoheight
-        {
-            get { return (double)GetValue(LassoheightProperty); }
-            set { SetValue(LassoheightProperty, value); }
-        }
-        public static readonly DependencyProperty LassoheightProperty =
-                   DependencyProperty.Register("Lassoheight", typeof(double), typeof(SelectionLassoControl), null);
 
         public SelectionLassoControl() => this.InitializeComponent();
 
@@ -48,10 +39,10 @@ namespace FlowBoard.Controls
         {
             var scale = FlowMatrixHelper.GetScale(e);
             var transform = FlowMatrixHelper.GetTranslation(e);
+            AggregateTransform.X += transform.Translation.X;
+            AggregateTransform.Y += transform.Translation.Y;
             this.TransformMatrix *= FlowMatrixHelper.ToMatrix4x4(transform);
             inkCanvas.InkPresenter.StrokeContainer.MoveSelected(new Point(transform.Translation.X, transform.Translation.Y));
-           // Canvas.SetLeft(this, Canvas.GetLeft(this) + e.Delta.Translation.X);
-           // Canvas.SetTop(this, Canvas.GetLeft(this) + e.Delta.Translation.Y);
         }
 
         private void selection_PointerEntered(object sender, PointerRoutedEventArgs e) => UIHelper.IsContentHovered = true;
