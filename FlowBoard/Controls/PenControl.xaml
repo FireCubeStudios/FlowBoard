@@ -248,7 +248,7 @@
         <Grid Padding="8, 0, 8, 8" >
             <!-- Style="{ThemeResource PenButton}" IsChecked="{x:Bind IsSelected, Mode=TwoWay}"-->
             <Grid>
-                <Button Canvas.ZIndex="3" HorizontalAlignment="Stretch" Margin="-4, -16, -4, 0" VerticalAlignment="Top" Height="32" Style="{ThemeResource ChevronButton}" Padding="-8, 0, -8, 0">
+                <Button Canvas.ZIndex="3" HorizontalAlignment="Stretch" Margin="-4, -16, -4, 0" VerticalAlignment="Top" Height="32" Style="{ThemeResource ChevronButton}" Padding="-8, 0, -8, 0" CornerRadius="0, 0, 4, 4">
                     <icons:FluentSymbolIcon Symbol="ChevronUp12"/>
                     <Button.Flyout>
                         <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">

@@ -43,7 +43,7 @@ namespace FlowBoard.Helpers
 
         public static CornerRadius PaneToRadius(bool e) => e ? new CornerRadius(0, 8, 0, 0) : new CornerRadius(0);
 
-        public static Thickness IndexToThickness(int index) => index == 0 ? new Thickness(2) : new Thickness(0);
+        public static Thickness IndexPaneToThickness(int index, bool pane) => index == 0 && pane ? new Thickness(0, 2, 2, 0) : new Thickness(0);
 
         public static SolidColorBrush IndexToColor(int index) => index switch
         {
@@ -67,5 +67,9 @@ namespace FlowBoard.Helpers
             else
                 return 0;
         }
+
+        public static bool TextToBool(string text) => text != "";
+
+        public static Visibility ItemsToVisibility(ItemCollection collection) => collection.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
     }
 }

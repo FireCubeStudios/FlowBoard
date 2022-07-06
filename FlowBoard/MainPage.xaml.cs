@@ -26,6 +26,7 @@ using System.Numerics;
 using FlowBoard.Helpers;
 using FlowBoard.Classes;
 using static FlowBoard.Classes.FileClass;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -37,6 +38,7 @@ namespace FlowBoard
     public sealed partial class MainPage : Page
     {
         ObservableCollection<InkDrawingAttributes> Pens = new ObservableCollection<InkDrawingAttributes>();
+        ProjectClass Project;
         public MainPage()
         {
             this.InitializeComponent();
@@ -52,32 +54,28 @@ namespace FlowBoard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            base.OnNavigatedTo(e);
-            ProjectClass Project = e.Parameter as ProjectClass ?? null;
-            if (ReferenceEquals(Project, null))
+            Project = e.Parameter as ProjectClass ?? null;
+            AppTitle.Text = Project.Name + " - FlowBoard FireCube's Edition";
+            if (Project.File.CanvasColor == Colors.Black)
             {
                 AddPen(Colors.White);
                 AddHighlighter();
-                Backgrounds.SelectedIndex = 1;
             }
             else
             {
-                AppTitle.Text = Project.Name + " - FlowBoard FireCube's Edition";
-                Backgrounds.SelectedIndex = UIHelper.ColorToIndex(Project.File.CanvasColor);
-                if(Project.File.CanvasColor == Colors.Black)
-                {
-                    AddPen(Colors.White);
-                    AddHighlighter();
-                }
-                else
-                {
-                    AddPen(Colors.Black);
-                    AddHighlighter();
-                }
+                AddPen(Colors.Black);
+                AddHighlighter();
+            }
+            try
+            {
                 foreach (var i in Project.File.InkStrokes)
                 {
                     InkHelper.CreateStroke(i, inkCanvas);
                 }
+            }
+            catch
+            {
+                // Blank project
             }
         }
 
@@ -147,23 +145,29 @@ namespace FlowBoard
                 PenTip = PenTipShape.Circle
             });
         }
-        private async void Button1_Click(object sender, RoutedEventArgs e)
+
+        private async void Home_Click(object sender, RoutedEventArgs e)
         {
-            FileClass file = await FileHelper.OpenFilePicker();
-            ThemeGrid.Background = new SolidColorBrush(file.CanvasColor);
-            foreach(var i in file.InkStrokes)
+            await Task.Run(() =>
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                InkHelper.CreateStroke(i, inkCanvas);
-            }
-        }
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            List<FileInkStroke> strokes = new List<FileInkStroke>();
-            foreach(var i in inkCanvas.InkPresenter.StrokeContainer.GetStrokes())
-            {
-                strokes.Add(FileHelper.ConvertToFileInkStroke(i));
-            }
-            await FileHelper.SaveNewFile(((SolidColorBrush)ThemeGrid.Background).Color, strokes);
+                try
+                {
+                    Toolbar.Visibility = Visibility.Collapsed;
+                    Settings.IsPaneOpen = false;
+                    string preview = await FileHelper.SavePreview(inkCanvas, Project.Name);
+                    Toolbar.Visibility = Visibility.Visible;
+                    Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
+                    SaveRing.Visibility = Visibility.Visible;
+                    await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview);
+                }
+                catch
+                {
+                    await new MessageDialog("Project with this name exists or invalid name \n Change the name in settings").ShowAsync();
+                    Toolbar.Visibility = Visibility.Visible;
+                    SaveRing.Visibility = Visibility.Collapsed;
+                }
+            }));
         }
     }
 }

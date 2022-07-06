@@ -7,9 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls" 
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:icons="using:Fluent.Icons"
-    controls:BackdropMaterial.ApplyToRootOrPageBackground="True"
-    RequestedTheme="Dark">
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:icons="using:Fluent.Icons" xmlns:UserControls="using:FlowBoard.Controls" xmlns:accesscache="using:Windows.Storage.AccessCache" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media" xmlns:helpers="using:FlowBoard.Helpers" xmlns:storage="using:Windows.Storage"
+    controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
     <StackPanel>
         <Border x:Name="AppTitleBar"
                 IsHitTestVisible="True"
@@ -26,7 +25,7 @@
                     Width="20" 
                     Height="20"/>
                 <TextBlock x:Name="AppTitle"
-                    Text="FlowBoard"
+                    Text="FlowBoard FireCube's Edition"
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
@@ -41,27 +40,21 @@
             <Grid.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource ToolbarButton}">
                     <Setter Property="Margin" Value="4"/>
-                        <Setter Property="Height" Value="32"/>
-                        <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
+                    <Setter Property="Height" Value="32"/>
+                    <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
                 </Style>
                 <Style TargetType="ToggleButton" BasedOn="{StaticResource ToolbarToggleButton}">
                     <Setter Property="Margin" Value="4"/>
-                        <Setter Property="Height" Value="32"/>
-                        <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
+                    <Setter Property="Height" Value="32"/>
+                    <Setter Property="Foreground" Value="{ThemeResource HvidSortBrush}"/>
                 </Style>
             </Grid.Resources>
             <TextBlock Grid.Row="0" FontWeight="SemiBold" FontSize="24">Home</TextBlock>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                <Button Height="32" Margin="4">
+                <Button Height="32" Margin="4" Click="AddButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <icons:FluentSymbolIcon Symbol="Add20"/>
                         <TextBlock Margin="8, 2, 0, 0" VerticalAlignment="Center" Text="New FlowBoard"/>
-                    </StackPanel>
-                </Button>
-                <Button Height="32" Margin="4">
-                    <StackPanel Orientation="Horizontal">
-                        <icons:FluentSymbolIcon Symbol="FolderOpen20"/>
-                        <TextBlock Margin="8, 2, 0, 0" VerticalAlignment="Center" Text="Open"/>
                     </StackPanel>
                 </Button>
                 <AppBarSeparator/>
@@ -73,10 +66,29 @@
                 </Button>
             </StackPanel>
             <StackPanel Grid.Row="1">
-                <TextBlock FontWeight="SemiBold" FontSize="20">Continue working on</TextBlock>
+                <TextBlock Visibility="{x:Bind helpers:UIHelper.ItemsToVisibility(RecentsList.Items), Mode=OneWay}" FontWeight="SemiBold" FontSize="20">Continue working on</TextBlock>
+                <ListView x:Name="RecentsList" SelectionMode="Single" Visibility="{x:Bind helpers:UIHelper.ItemsToVisibility(RecentsList.Items), Mode=OneWay}" ItemContainerStyle="{ThemeResource RecentsContainer}" SelectionChanged="Recents_SelectionChanged" Margin="8, 12, 8, 12" ItemsSource="{x:Bind helpers:FileHelper.Recents, Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="accesscache:AccessListEntry">
+                            <UserControls:RecentFileCard Entry="{x:Bind }"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
             <StackPanel Grid.Row="2">
                 <TextBlock FontWeight="SemiBold" FontSize="20">All projects</TextBlock>
+                <ListView x:Name="FilesList" SelectionMode="Single" SelectionChanged="Files_SelectionChanged" Margin="8, 12, 8, 12" ItemContainerStyle="{ThemeResource DefaultContainer}" ItemsSource="{x:Bind helpers:FileHelper.Files, Mode=OneWay}" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.HorizontalScrollMode="Disabled">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="storage:StorageFile">
+                            <UserControls:DefaultFileCard File="{x:Bind }" HorizontalAlignment="Stretch"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
         </Grid>
     </StackPanel>

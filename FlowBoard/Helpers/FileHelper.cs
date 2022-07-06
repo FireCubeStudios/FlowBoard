@@ -10,12 +10,76 @@ using Windows.UI.Input.Inking;
 using Windows.Storage.Provider;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-using static FlowBoard.Classes.FileClass;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
+using Windows.Storage.AccessCache;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.Graphics.Imaging;
+using Windows.Graphics.Display;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Collections.ObjectModel;
 
 namespace FlowBoard.Helpers
 {
     public class FileHelper
     {
+        public static ObservableCollection<AccessListEntry> Recents = new();
+        public static void RefreshRecentItems()
+        {
+            Recents.Clear();
+            foreach (AccessListEntry entry in StorageApplicationPermissions.MostRecentlyUsedList.Entries)
+            {
+                Recents.Add(entry);
+            }
+        }
+
+        public static ObservableCollection<StorageFile> Files = new();
+        public static async void RefreshFiles()
+        {
+            Files.Clear();
+            foreach (StorageFile File in await ApplicationData.Current.LocalFolder.GetFilesAsync())
+            {
+                if (!File.Name.EndsWith(".png"))
+                {
+                    Files.Add(File);
+                }
+            }
+        }
+
+        public static async Task<bool> CreateProjectAsync(string Name, Color background)
+        {
+            try
+            {
+                ProjectClass project = new ProjectClass(Name);
+                project.File.CanvasColor = background;
+                project.RawFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(Name + ".flowx", CreationCollisionOption.GenerateUniqueName);
+                Frame rootFrame = Window.Current.Content as Frame;
+                rootFrame.Navigate(typeof(MainPage), project);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static async Task<bool> OpenProjectAsync(StorageFile File)
+        {
+            try
+            {
+                ProjectClass project = new ProjectClass(File.Name);
+                project.File = await OpenFileAsync(File);
+                project.RawFile = File;
+                Frame rootFrame = Window.Current.Content as Frame;
+                rootFrame.Navigate(typeof(MainPage), project);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static async Task<FileClass> OpenFilePicker()
         {
             var picker = new FileOpenPicker
@@ -26,6 +90,8 @@ namespace FlowBoard.Helpers
             picker.FileTypeFilter.Add(".flowx");
             return JsonConvert.DeserializeObject<FileClass>(await FileIO.ReadTextAsync(await picker.PickSingleFileAsync()));
         }
+
+        public static async Task<FileClass> OpenFileAsync(StorageFile File) => JsonConvert.DeserializeObject<FileClass>(await FileIO.ReadTextAsync(File));
 
         public static async Task<bool> SaveNewFile(Color canvasColor, List<FileInkStroke> inkStrokes)
         {
@@ -45,12 +111,69 @@ namespace FlowBoard.Helpers
                 CachedFileManager.DeferUpdates(file);
                 await FileIO.WriteTextAsync(file, JsonConvert.SerializeObject(File));
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+                Frame rootFrame = Window.Current.Content as Frame;
+                rootFrame.Navigate(typeof(HomePage));
                 return status == FileUpdateStatus.Complete ? true : false;
             }
             else
             {
                 return false;
             }
+        }
+
+        // Save the project + add it to the most recently used list + get a preview image
+        public static async Task<bool> SaveProjectAsync(Color canvasColor, InkCanvas inkCanvas, ProjectClass project, string PreviewName)
+        {
+            List<FileInkStroke> strokes = new List<FileInkStroke>();
+            try
+            {
+                Parallel.ForEach(inkCanvas.InkPresenter.StrokeContainer.GetStrokes(), i =>
+                {
+                    strokes.Add(FileHelper.ConvertToFileInkStroke(i));
+                });
+            }
+            catch
+            {
+                // No strokes drawn
+            }
+            project.File.CanvasColor = canvasColor;
+            project.File.InkStrokes = strokes;
+            if(project.RawFile.Name != project.Name)
+            {
+                await project.RawFile.RenameAsync(project.Name);
+            }
+            CachedFileManager.DeferUpdates(project.RawFile);
+            await FileIO.WriteTextAsync(project.RawFile, JsonConvert.SerializeObject(project.File));
+            FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(project.RawFile);
+            StorageApplicationPermissions.MostRecentlyUsedList.Add(project.RawFile, PreviewName);
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(HomePage));
+            return status == FileUpdateStatus.Complete ? true : false;
+        }
+
+        public static async Task<string> SavePreview(InkCanvas inkCanvas, string Name)
+        {
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
+            await renderTargetBitmap.RenderAsync(inkCanvas);
+            var pixelBuffer = await renderTargetBitmap.GetPixelsAsync();
+            var pixels = pixelBuffer.ToArray();
+            var displayInformation = DisplayInformation.GetForCurrentView();
+            StorageFolder localFolder =
+            ApplicationData.Current.LocalFolder;
+            StorageFile file = await localFolder.CreateFileAsync(Name + ".png", CreationCollisionOption.ReplaceExisting);
+            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                encoder.SetPixelData(BitmapPixelFormat.Bgra8,
+                                     BitmapAlphaMode.Premultiplied,
+                                     (uint)renderTargetBitmap.PixelWidth,
+                                     (uint)renderTargetBitmap.PixelHeight,
+                                      displayInformation.RawDpiX,
+                         displayInformation.RawDpiY,
+                                     pixels);
+                await encoder.FlushAsync();
+            }
+            return file.Name;
         }
 
         public static FileInkStroke ConvertToFileInkStroke(InkStroke ink)

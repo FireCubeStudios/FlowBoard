@@ -21,13 +21,14 @@
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid>
+        <controls:ProgressRing x:Name="SaveRing" Visibility="Collapsed" IsActive="True" Height="80" Width="80" Canvas.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Border x:Name="AppTitleBar"
                 IsHitTestVisible="True"
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Height="32"
                 Canvas.ZIndex="1" 
-                Margin="12, 2,0,0">
+                Margin="12, 0,0,0">
             <StackPanel Orientation="Horizontal">
                 <Image x:Name="AppFontIcon"
                     HorizontalAlignment="Left" 
@@ -47,15 +48,15 @@
             <SplitView.Pane>
                 <StackPanel Padding="16">
                     <TextBlock FontWeight="SemiBold" FontSize="28">Settings</TextBlock>
-                    <controls:RadioButtons x:Name="Backgrounds">
-                        <RadioButton Style="{ThemeResource GlowRadio}" Content="Mica"/>
-                        <RadioButton Foreground="Black" Style="{ThemeResource GlowThemeRadio}" Content="Black"/>
-                        <RadioButton Foreground="White" Style="{ThemeResource GlowThemeRadio}" Content="White"/>
-                        <RadioButton Foreground="Wheat" Style="{ThemeResource GlowThemeRadio}" Content="Wheat"/>
-                    </controls:RadioButtons>
+                    <TextBlock FontWeight="SemiBold" Margin="0, 16, 0, 0">Project Name:</TextBlock>
+                    <toolkit:DropShadowPanel ShadowOpacity="0.4" OffsetX="4" CornerRadius="8" Margin="0, 12, 0, 16" OffsetY="4">
+                        <TextBox x:Name="Name" Text="{x:Bind Project.Name, Mode=TwoWay}" Height="20" Width="340" PlaceholderText="Enter Project Name" Style="{ThemeResource GlowTextBox}"/>
+                    </toolkit:DropShadowPanel>
+                    <TextBlock FontWeight="SemiBold">Canvas Background:</TextBlock>
+                    <UserControls:BackgroundSelectorControl x:Name="Backgrounds" SelectedIndex="{x:Bind helpers:UIHelper.ColorToIndex(Project.File.CanvasColor), Mode=OneWay}" Margin="8, 12, 0, 12"/>
                 </StackPanel>
             </SplitView.Pane>
-            <Grid x:Name="ThemeGrid" BorderThickness="{x:Bind helpers:UIHelper.IndexToThickness(Backgrounds.SelectedIndex), Mode=OneWay}" BorderBrush="{ThemeResource MicaBorderBrush}" CornerRadius="{x:Bind helpers:UIHelper.PaneToRadius(Settings.IsPaneOpen), Mode=OneWay}" Background="{x:Bind helpers:UIHelper.IndexToColor(Backgrounds.SelectedIndex), Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid x:Name="ThemeGrid" BorderThickness="{x:Bind helpers:UIHelper.IndexPaneToThickness(Backgrounds.SelectedIndex, Settings.IsPaneOpen), Mode=OneWay}" BorderBrush="{ThemeResource MicaBorderBrush}" CornerRadius="{x:Bind helpers:UIHelper.PaneToRadius(Settings.IsPaneOpen), Mode=OneWay}" Background="{x:Bind helpers:UIHelper.IndexToColor(Backgrounds.SelectedIndex), Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid>
                     <Border CornerRadius="{x:Bind helpers:UIHelper.PaneToRadius(Settings.IsPaneOpen), Mode=OneWay}">
                         <Canvas x:Name="selectionCanvas" Background="{x:Bind ThemeGrid.Background, Mode=OneWay}" ManipulationMode="All" Width="{x:Bind inkCanvas.Width,Mode=OneWay}" Height="{x:Bind inkCanvas.Height, Mode=OneWay}"/>
@@ -71,7 +72,7 @@
                         </toolkit:DropShadowPanel>
                     </Canvas>
                 </Grid>
-                <toolkit:DropShadowPanel BlurRadius="10.0" ShadowOpacity="0.4"
+                <toolkit:DropShadowPanel BlurRadius="10.0" ShadowOpacity="0.4" x:Name="Toolbar"
                 OffsetX="0" Canvas.ZIndex="3" Margin="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" OffsetY="0.0" IsMasked="True" Color="Black">
                     <Grid CornerRadius="8" Background="{ThemeResource MicaBrush}" BorderThickness="1" BorderBrush="{ThemeResource MicaBorderBrush}">
                         <Grid.Resources>
@@ -103,6 +104,7 @@
                                 </StackPanel>
                                 <AppBarSeparator/>
                                 <ListView x:Name="PensList" AllowDrop="True" CanDragItems="True" CanReorderItems="True" SelectionMode="Single" SelectedIndex="0" SelectionChanged="PensList_SelectionChanged" ItemsSource="{x:Bind Pens, Mode=OneWay}">
+                                    <!--ItemContainerStyle="{ThemeResource GlowListStyle}"-->
                                     <ListView.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <VirtualizingStackPanel Orientation="Horizontal" />
@@ -140,7 +142,7 @@
                                 </StackPanel>
                                 <AppBarSeparator/>
                                 <StackPanel Orientation="Horizontal">
-                                    <ToggleButton x:Name="SelectionToggle" Checked="{x:Bind Service:CanvasSelectionService.EnableSelection}" Unchecked="{x:Bind Service:CanvasSelectionService.DisableSelection}" Style="{ThemeResource ToolbarToggleButton}">
+                                    <ToggleButton x:Name="SelectionToggle" Style="{ThemeResource ExperimentalToolbarToggleButton}" Margin="4" Height="32" Checked="{x:Bind Service:CanvasSelectionService.EnableSelection}" Unchecked="{x:Bind Service:CanvasSelectionService.DisableSelection}">
                                         <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="SelectObject24"/>
                                     </ToggleButton>
                                     <StackPanel>
@@ -150,7 +152,7 @@
                                 </StackPanel>
                                 <AppBarSeparator/>
                                 <StackPanel>
-                                    <Button Click="Button_Click">
+                                    <Button Click="Home_Click">
                                         <icons:FluentSymbolIcon Symbol="Home20" Margin="0, 0, 1, 0"/>
                                     </Button>
                                     <ToggleButton x:Name="SettingsButton" Style="{ThemeResource SettingsToolbarToggleButton}" Padding="0" Foreground="{ThemeResource HvidSortBrush}" Margin="4" Height="32" Width="44"/>

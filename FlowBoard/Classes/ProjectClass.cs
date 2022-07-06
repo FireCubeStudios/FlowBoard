@@ -12,5 +12,12 @@ namespace FlowBoard.Classes
         public FileClass File { get; set; }
         public string Name { get; set; }
         public StorageFile RawFile { get; set; }
+
+        public ProjectClass(string name)
+        {
+            Name = name;
+            File = new FileClass();
+            RawFile = null;
+        }
     }
 }

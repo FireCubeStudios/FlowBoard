@@ -1,0 +1,25 @@
+﻿<UserControl
+    x:Class="FlowBoard.Controls.DefaultFileCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:icons="using:Fluent.Icons" xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Loaded="Card_Loaded"
+    HorizontalAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch">
+        <muxc:ProgressRing x:Name="Ring" IsActive="True" Visibility="Collapsed" Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.ZIndex="2"/>
+        <Grid x:Name="Content" Margin="12, 8, 12, 8">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock x:Name="FileName" MaxWidth="200" FontWeight="SemiBold" Margin="0, 0, 0, 4"/>
+                <TextBlock x:Name="FileDate" MaxWidth="200" Opacity="0.7" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="Delete" x:FieldModifier="Public" Click="Delete_Click" Style="{ThemeResource ExpermentalToolbarButton}" Height="32" Width="44" Margin="4">
+                    <icons:FluentSymbolIcon Symbol="Delete20" Margin="0, 0, 1, 0"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

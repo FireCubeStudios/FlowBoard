@@ -1,0 +1,57 @@
+﻿<Page
+    x:Class="FlowBoard.NewProjectPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" 
+    xmlns:Icons="using:Fluent.Icons" 
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
+    xmlns:controls="using:FlowBoard.Controls" xmlns:helpers="using:FlowBoard.Helpers" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Border x:Name="AppTitleBar"
+                IsHitTestVisible="True"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Height="40"
+                Canvas.ZIndex="1" 
+                Margin="12,0,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Image x:Name="AppFontIcon"
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Center"
+                    Source="Assets/Square44x44Logo.png" 
+                    Width="16" 
+                    Height="16"/>
+                <TextBlock x:Name="AppTitle"
+                    Text="New project - FlowBoard FireCube's Edition"
+                    VerticalAlignment="Center"
+                    Margin="12, 0, 0, 0"
+                    Style="{StaticResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </Border>
+        <toolkit:DropShadowPanel Canvas.ZIndex="3" ShadowOpacity="0.4" OffsetX="4" CornerRadius="8" OffsetY="4" HorizontalAlignment="center" VerticalAlignment="Center">
+            <Grid BorderBrush="{ThemeResource MicaBorderBrush}" Background="{ThemeResource 1cBrush}" CornerRadius="8"  BorderThickness="1" HorizontalAlignment="center" VerticalAlignment="Center">
+                <muxc:ProgressRing x:Name="Ring" IsActive="True" Visibility="Collapsed" Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.ZIndex="2"/>
+                <StackPanel x:Name="Content" HorizontalAlignment="center" VerticalAlignment="Center" Padding="16">
+                    <TextBlock FontSize="24" FontWeight="SemiBold" Margin="0, 0, 0, 12">New Project</TextBlock>
+                    <TextBlock FontWeight="SemiBold">Project Name:</TextBlock>
+                    <toolkit:DropShadowPanel ShadowOpacity="0.4" OffsetX="4" CornerRadius="8" Margin="0, 12, 0, 16" OffsetY="4">
+                        <TextBox x:Name="Name" Height="20" Width="340" PlaceholderText="New Project" Style="{ThemeResource GlowTextBox}"/>
+                    </toolkit:DropShadowPanel>
+                    <TextBlock FontWeight="SemiBold">Canvas Background:</TextBlock>
+                    <controls:BackgroundSelectorControl x:Name="Backgrounds" SelectedIndex="0" Margin="8, 12, 0, 12"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                        <TextBlock x:Name="Status" Foreground="Red"/>
+                        <Button IsEnabled="{x:Bind helpers:UIHelper.TextToBool(Name.Text), Mode=OneWay}" Width="80" Click="CreateProject_Click">Create</Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </toolkit:DropShadowPanel>
+        <controls:AuroraLite/>
+    </Grid>
+</Page>
