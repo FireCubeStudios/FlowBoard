@@ -10,7 +10,7 @@
     <Grid>
         <muxc:ProgressRing x:Name="Ring" IsActive="True" Visibility="Collapsed" Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.ZIndex="2"/>
         <StackPanel x:Name="Content">
-            <Grid x:Name="imgGrid" Height="250" Width="400">
+            <Grid x:Name="imgGrid" Height="260" Width="400">
                 <Image x:Name="PreviewImage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
             <MenuFlyoutSeparator/>
@@ -21,8 +21,8 @@
                     </Grid.Background>
                     <Grid Margin="12, 4, 12, 12">
                         <StackPanel HorizontalAlignment="Left">
-                            <TextBlock x:Name="FileName" MaxWidth="200" FontSize="24" Margin="0, 0, 0, 4"/>
-                            <TextBlock x:Name="FileDate" MaxWidth="200" Opacity="0.7" />
+                            <TextBlock x:Name="FileName" MaxWidth="300" TextTrimming="CharacterEllipsis" FontSize="18" Margin="0, 0, 0, 4"/>
+                            <TextBlock x:Name="FileDate" MaxWidth="300" Opacity="0.7" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button x:Name="Delete" x:FieldModifier="Public" Click="Delete_Click" Style="{ThemeResource ExpermentalToolbarButton}" Height="32" Width="44" Margin="4">

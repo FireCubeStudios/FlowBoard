@@ -15,13 +15,21 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace FlowBoard.Controls
+namespace FlowBoard.Materials
 {
-    public sealed partial class AuroraLite : UserControl
+    public sealed partial class BloomView : UserControl
     {
-        public AuroraLite()
+        public BloomView()
         {
             this.InitializeComponent();
+            BloomWebView.Height = Window.Current.Bounds.Height;
+            BloomWebView.Width = Window.Current.Bounds.Width;
+        }
+
+        private void Bloom_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            BloomWebView.Height = Window.Current.Bounds.Height;
+            BloomWebView.Width = Window.Current.Bounds.Width;
         }
     }
 }

@@ -1,0 +1,217 @@
+﻿<Page
+    x:Class="FlowBoard.OOBEPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" 
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls" 
+    xmlns:icons="using:Fluent.Icons"
+    xmlns:Materials="using:FlowBoard.Materials"
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Name="LoadingAnimation">
+            <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" RepeatBehavior="Forever" Storyboard.TargetProperty="(Control.Foreground).(Brush.RelativeTransform).(CompositeTransform.TranslateX)" Storyboard.TargetName="bar1">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="LoadingAnimation2">
+            <DoubleAnimationUsingKeyFrames EnableDependentAnimation="True" RepeatBehavior="Forever" Storyboard.TargetProperty="(Control.Foreground).(Brush.RelativeTransform).(CompositeTransform.TranslateX)" Storyboard.TargetName="bar2">
+                <EasingDoubleKeyFrame KeyTime="0" Value="-1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <LinearGradientBrush x:Name="ShineBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+            <LinearGradientBrush.RelativeTransform>
+                <CompositeTransform CenterY="0.5" CenterX="0.5" Rotation="95"/>
+            </LinearGradientBrush.RelativeTransform>
+            <GradientStop Color="{ThemeResource SystemAccentColor}" Offset="0.3"/>
+            <GradientStop Color="{ThemeResource SystemAccentColorLight2}" Offset="0.5"/>
+            <GradientStop Color="{ThemeResource SystemAccentColor}" Offset="0.8"/>
+        </LinearGradientBrush>
+    </Page.Resources>
+    <Grid>
+        <Border x:Name="AppTitleBar"
+                IsHitTestVisible="True"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Height="40"
+                Canvas.ZIndex="1" 
+                Margin="12,0,0,0">
+            <StackPanel Orientation="Horizontal">
+                <Image x:Name="AppFontIcon"
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Center"
+                    Source="Assets/Square44x44Logo.png" 
+                    Width="16" 
+                    Height="16"/>
+                <TextBlock x:Name="AppTitle"
+                    Text="FlowBoard FireCube's Edition PRE-RELEASE"
+                    VerticalAlignment="Center"
+                    Margin="12, 0, 0, 0"
+                    Style="{StaticResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </Border>
+        <Materials:BloomView HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Grid x:Name="Container">
+            <StackPanel Canvas.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" x:Name="OpenRing" Visibility="Collapsed" >
+                <muxc:ProgressRing IsActive="True" Height="80" Width="80"/>
+                <TextBlock FontWeight="SemiBold" FontSize="24" VerticalAlignment="Center" Margin="24, 0, 0, 0">Loading...</TextBlock>
+            </StackPanel>
+            <Rectangle x:Name="hostForVisual" Fill="Transparent"/>
+            <StackPanel HorizontalAlignment="Center" Canvas.ZIndex="2"  VerticalAlignment="Center">
+
+                <controls:DropShadowPanel Canvas.ZIndex="2" BlurRadius="16" ShadowOpacity="0.12" OffsetY="24" OffsetX="24" CornerRadius="8">
+
+                    <FlipView RequiresPointer="Never" BorderBrush="{ThemeResource BorderHighContrastBrush}" BorderThickness="3" Margin="20"
+            Background="{ThemeResource SortHvidBrush}" VerticalAlignment="Stretch"
+            MaxHeight="480" HorizontalAlignment="Stretch" MaxWidth="800" 
+            CornerRadius="8" x:Name="FlappyBird" SelectionChanged="FlappyBird_SelectionChanged"
+            Style="{StaticResource FlipStyle}">
+
+                        <FlipViewItem>
+                            <Grid>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="8">
+                                    <Image Stretch="UniformToFill" Source="https://media.discordapp.net/attachments/994629279029657660/994633831103602718/unknown.png" Width="365"/>
+
+                                    <StackPanel Orientation="Vertical" Margin="28,40,28,0" Width="375">
+                                        <icons:FluentSymbolIcon Symbol="Whiteboard24" Foreground="{ThemeResource ResponsiveAccentBrush1}" HorizontalAlignment="Left" Margin="0,0,0,12" RenderTransformOrigin="0.5,0.5">
+                                            <icons:FluentSymbolIcon.RenderTransform>
+                                                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                            </icons:FluentSymbolIcon.RenderTransform>
+                                        </icons:FluentSymbolIcon>
+                                        <TextBlock Text="Welcome to FlowBoard!" FontSize="32" Margin="0,0,0,12" FontWeight="SemiBold" CharacterSpacing="-20"/>
+                                        <TextBlock Opacity="0.70" LineHeight="24" Width="325" HorizontalAlignment="Left"
+                            Text="Thank you for downloading FlowBoard - FireCube's Edition PRE-RELEASE. After following this quick slideshow, you'll know some information to keep in mind during the PRE-RELEASE period!" TextWrapping="WrapWholeWords"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,172,0,0" >
+                                            <Button Content="Release Notes" Visibility="Collapsed" Background="Transparent" IsEnabled="False" BorderThickness="0.5" BorderBrush="{ThemeResource HvidSortBrush}" Padding="16,8,16,8"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </Grid>
+                        </FlipViewItem>
+
+                        <FlipViewItem>
+                            <StackPanel Orientation="Vertical" Margin="28,80,28,0" Width="375" HorizontalAlignment="Center">
+                                <icons:FluentSymbolIcon Symbol="Info24" Foreground="#e96e60" HorizontalAlignment="Center" Margin="0,0,0,16" RenderTransformOrigin="0.5,0.5">
+                                    <icons:FluentSymbolIcon.RenderTransform>
+                                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                    </icons:FluentSymbolIcon.RenderTransform>
+                                </icons:FluentSymbolIcon>
+                                <TextBlock Text="PRE-RELEASE Info" FontSize="32" Margin="0,0,0,12" FontWeight="SemiBold" CharacterSpacing="-20" HorizontalAlignment="Center"/>
+                                <TextBlock Opacity="0.70" LineHeight="24" Width="325" HorizontalAlignment="Center" TextAlignment="Center"
+                            Text="The PRE-RELEASE includes several WIP Experimental features (Portion eraser, selection) in addition to an absence of several planned features such as toolbar customization and other settings." TextWrapping="WrapWholeWords" />
+                                <StackPanel Orientation="Horizontal" Margin="0, 8, 0, 8">
+                                    <controls:DropShadowPanel CornerRadius="2" Margin="2,2,4,2" Color="#e96e60" ShadowOpacity="0.93" VerticalAlignment="Center">
+                                        <Grid Height="2" Width="18" CornerRadius="2">
+                                            <Grid.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#e96e60" Offset="0.0" />
+                                                    <GradientStop Color="Red" Offset="0.5" />
+                                                    <GradientStop Color="#e96e60" Offset="1.0" />
+                                                </LinearGradientBrush>
+                                            </Grid.Background>
+                                        </Grid>
+                                    </controls:DropShadowPanel>
+                                    <TextBlock FontWeight="SemiBold"> Red in UI are experimental WIP PRE-RELEASE features</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0, 8, 0, 8">
+                                    <controls:DropShadowPanel CornerRadius="2" Margin="2,2,4,2" Color="{ThemeResource SystemAccentColorLight3}" ShadowOpacity="0.93" VerticalAlignment="Center">
+                                        <Grid Height="2" Width="18" CornerRadius="2">
+                                            <Grid.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="{ThemeResource SystemAccentColorLight3}" Offset="0.0" />
+                                                    <GradientStop Color="{ThemeResource SystemAccentColorLight2}" Offset="0.5" />
+                                                    <GradientStop Color="{ThemeResource SystemAccentColorLight3}" Offset="1.0" />
+                                                </LinearGradientBrush>
+                                            </Grid.Background>
+                                        </Grid>
+                                    </controls:DropShadowPanel>
+                                    <TextBlock FontWeight="SemiBold">Accented UI features could have bugs in PRE-RELEASE</TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </FlipViewItem>
+
+                        <FlipViewItem >
+                            <StackPanel Orientation="Vertical" Margin="28,80,28,0" Width="475" HorizontalAlignment="Center">
+                                <icons:FluentSymbolIcon Symbol="Info24" Foreground="{ThemeResource ResponsiveAccentBrush1}" HorizontalAlignment="Center" Margin="0,0,0,16" RenderTransformOrigin="0.5,0.5">
+                                    <icons:FluentSymbolIcon.RenderTransform>
+                                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                                    </icons:FluentSymbolIcon.RenderTransform>
+                                </icons:FluentSymbolIcon>
+                                <TextBlock Text="Comparison" FontSize="32" Margin="0,0,0,12" FontWeight="SemiBold" CharacterSpacing="-20" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal">
+                                <TextBlock LineHeight="24" HorizontalAlignment="Center" Margin="0, 0, 24, 0">
+                                   <Bold> FlowBoard FireCube's Edition (this)</Bold>
+                                    <LineBreak/>
+                                    ・Tablet oriented UI design
+                                    <LineBreak/>
+                                    ✓ Stencils + Erasers
+                                    <LineBreak/>
+                                    ✓ Smooth Navigation
+                                    <LineBreak/>
+                                    ⛌ Text, Images object types
+                                </TextBlock>
+                                    <StackPanel>
+                                <TextBlock LineHeight="24" HorizontalAlignment="Center">
+                                    <Bold> FlowBoard</Bold>
+                                    <LineBreak/>
+                                    ・Desktop oriented UI design
+                                    <LineBreak/>
+                                    ✓ Stenciles + Erasers
+                                    <LineBreak/>
+                                    ⛌ Smooth Navigation
+                                    <LineBreak/>
+                                    ✓ Text, Images object types
+                                </TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </FlipViewItem>
+                        <FlipViewItem >
+                            <StackPanel Orientation="Vertical" Margin="28,120,28,0" Width="375" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE001;" FontSize="40" Foreground="{ThemeResource ResponsiveAccentBrush1}" HorizontalAlignment="Center" Margin="0,0,0,16" />
+                                <TextBlock Text="You're all set!" FontSize="32" Margin="0,0,0,12" FontWeight="SemiBold" CharacterSpacing="-20" HorizontalAlignment="Center"/>
+                                <TextBlock Opacity="0.70" LineHeight="24" Width="325" HorizontalAlignment="Center" TextAlignment="Center"
+                                Text="There's more to discover in this app but it's better to leave that on you. Hopefully, you'll enjoy using our app. Without further ado, let's begin!" TextWrapping="WrapWholeWords" />
+
+                                <Button HorizontalAlignment="Center" Padding="16,10,16,10" Style="{StaticResource AccentButtonStyle}" Margin="0, 40,0,0" Click="CompletedOOBE_Click">
+                                    <Button.Content >
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Glyph="&#xE0AB;" Margin="0,0,12,0" FontSize="14"/>
+                                            <TextBlock Text="Start using FlowBoard"/>
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </StackPanel>
+                        </FlipViewItem>
+                    </FlipView>
+                </controls:DropShadowPanel>
+                <StackPanel x:Name="Stepper">
+                    <TextBlock HorizontalAlignment="Center" x:Name="Section" Margin="0, 20, 0, 12" FontWeight="SemiBold">Setup</TextBlock>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 0, 0, 12">
+                        <muxc:ProgressBar x:Name="bar1" Width="100" Minimum="0" Maximum="20" Value="10" Margin="4, 0, 4, 0">
+                        </muxc:ProgressBar>
+                        <muxc:ProgressBar x:Name="bar2" Width="100" Minimum="0" Maximum="20" Value="0" Margin="4, 0, 4, 0">
+                        </muxc:ProgressBar>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Center" x:Name="Steps">Step 1/4</TextBlock>
+                </StackPanel>
+            </StackPanel>
+            <Button Canvas.ZIndex="2" x:Name="Skipper" Background="Transparent" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="34" 
+                Padding="16,8,16,8" CornerRadius="4" Click="CompletedOOBE_Click">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE0AB;" FontSize="12" Margin="0,0,12 ,0"/>
+                        <TextBlock Text="Skip"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+        </Grid>
+    </Grid>
+</Page>

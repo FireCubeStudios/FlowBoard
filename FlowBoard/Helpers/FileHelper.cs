@@ -24,12 +24,21 @@ namespace FlowBoard.Helpers
     public class FileHelper
     {
         public static ObservableCollection<AccessListEntry> Recents = new();
-        public static void RefreshRecentItems()
+        public static async void RefreshRecentItems()
         {
             Recents.Clear();
             foreach (AccessListEntry entry in StorageApplicationPermissions.MostRecentlyUsedList.Entries)
             {
-                Recents.Add(entry);
+                try
+                {
+                    await StorageApplicationPermissions.MostRecentlyUsedList.GetFileAsync(entry.Token);
+                    Recents.Add(entry);
+                }
+                catch
+                {
+                    // File does not exist
+                    StorageApplicationPermissions.MostRecentlyUsedList.Remove(entry.Token);
+                }
             }
         }
 
@@ -122,7 +131,7 @@ namespace FlowBoard.Helpers
         }
 
         // Save the project + add it to the most recently used list + get a preview image
-        public static async Task<bool> SaveProjectAsync(Color canvasColor, InkCanvas inkCanvas, ProjectClass project, string PreviewName)
+        public static async Task<bool> SaveProjectAsync(Color canvasColor, InkCanvas inkCanvas, ProjectClass project, string PreviewName, bool IsSilent)
         {
             List<FileInkStroke> strokes = new List<FileInkStroke>();
             try
@@ -146,6 +155,8 @@ namespace FlowBoard.Helpers
             await FileIO.WriteTextAsync(project.RawFile, JsonConvert.SerializeObject(project.File));
             FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(project.RawFile);
             StorageApplicationPermissions.MostRecentlyUsedList.Add(project.RawFile, PreviewName);
+            if(IsSilent == true)
+                return status == FileUpdateStatus.Complete ? true : false;
             Frame rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(HomePage));
             return status == FileUpdateStatus.Complete ? true : false;

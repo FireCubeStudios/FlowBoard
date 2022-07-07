@@ -9,7 +9,12 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls" 
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:icons="using:Fluent.Icons" xmlns:UserControls="using:FlowBoard.Controls" xmlns:accesscache="using:Windows.Storage.AccessCache" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media" xmlns:helpers="using:FlowBoard.Helpers" xmlns:storage="using:Windows.Storage"
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
-    <StackPanel>
+    <Grid>
+        <StackPanel Canvas.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" x:Name="OpenRing" Visibility="Collapsed" >
+            <controls:ProgressRing IsActive="True" Height="80" Width="80"/>
+            <TextBlock FontWeight="SemiBold" FontSize="24" VerticalAlignment="Center" Margin="24, 0, 0, 0">Loading...</TextBlock>
+        </StackPanel>
+        <StackPanel>
         <Border x:Name="AppTitleBar"
                 IsHitTestVisible="True"
                 VerticalAlignment="Top"
@@ -25,7 +30,7 @@
                     Width="20" 
                     Height="20"/>
                 <TextBlock x:Name="AppTitle"
-                    Text="FlowBoard FireCube's Edition"
+                    Text="FlowBoard FireCube's Edition PRE-RELEASE"
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
@@ -63,10 +68,70 @@
                         <icons:FluentSymbolIcon Symbol="Info20"/>
                         <TextBlock Margin="8, 2, 0, 0" VerticalAlignment="Center" Text="Info"/>
                     </StackPanel>
+                    <Button.Flyout>
+                        <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
+                            <StackPanel Padding="12">
+                                <TextBlock FontWeight="SemiBold" FontSize="18">About</TextBlock>
+                                <TextBlock Opacity="0.7" FontSize="16">FlowBoard - FireCube's Edition PRE-RELEASE</TextBlock>
+                                <TextBlock Opacity="0.7" Text="・Version 0.1.x.0"/>
+                                <HyperlinkButton NavigateUri="https://github.com/FireCubeStudios-Community/FlowBoard-FireCube-Edition" Content="GitHub"/>
+                                <MenuFlyoutSeparator Margin="0, 8, 0, 8"/>
+                                <TextBlock Opacity="0.7" FontWeight="Bold" FontSize="16" >PRE-RELEASE Information</TextBlock>
+                                <StackPanel Orientation="Horizontal" Margin="0, 8, 0, 8">
+                                    <toolkit:DropShadowPanel CornerRadius="2" Margin="2,2,4,2" Color="#e96e60" ShadowOpacity="0.93" VerticalAlignment="Center">
+                                        <Grid Height="2" Width="18" CornerRadius="2">
+                                            <Grid.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#e96e60" Offset="0.0" />
+                                                    <GradientStop Color="Red" Offset="0.5" />
+                                                    <GradientStop Color="#e96e60" Offset="1.0" />
+                                                </LinearGradientBrush>
+                                            </Grid.Background>
+                                        </Grid>
+                                    </toolkit:DropShadowPanel>
+                                    <TextBlock FontWeight="SemiBold"> Red in UI are experimental WIP PRE-RELEASE features</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0, 8, 0, 8">
+                                    <toolkit:DropShadowPanel CornerRadius="2" Margin="2,2,4,2" Color="{ThemeResource SystemAccentColorLight3}" ShadowOpacity="0.93" VerticalAlignment="Center">
+                                        <Grid Height="2" Width="18" CornerRadius="2">
+                                            <Grid.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="{ThemeResource SystemAccentColorLight3}" Offset="0.0" />
+                                                    <GradientStop Color="{ThemeResource SystemAccentColorLight2}" Offset="0.5" />
+                                                    <GradientStop Color="{ThemeResource SystemAccentColorLight3}" Offset="1.0" />
+                                                </LinearGradientBrush>
+                                            </Grid.Background>
+                                        </Grid>
+                                    </toolkit:DropShadowPanel>
+                                    <TextBlock FontWeight="SemiBold">Accented UI features could have bugs in PRE-RELEASE</TextBlock>
+                                </StackPanel>
+                                <MenuFlyoutSeparator Margin="0, 8, 0, 8"/>
+                                <Grid CornerRadius="4" Background="{ThemeResource LayerFillColorDefaultBrush}" Padding="8" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{ThemeResource MicaBorderBrush}">
+                                    <StackPanel>
+                                        <TextBlock FontWeight="SemiBold" FontSize="18">FlowBoard Discord</TextBlock>
+                                        <TextBlock Opacity="0.7">Join for previews, feedback, early access</TextBlock>
+                                    </StackPanel>
+                                    <Button Width="80" Click="Discord_Click" Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Center">Join</Button>
+                                </Grid>
+                                <MenuFlyoutSeparator Margin="0, 8, 0, 8"/>
+                                <TextBlock Opacity="0.7" FontSize="16">Developer</TextBlock>
+                                <HyperlinkButton NavigateUri="https://twitter.com/firecubestudios" Content="・FireCubeStudios"/>
+                                <TextBlock Opacity="0.7" Margin="12, 0, 0, 0">Follow for App updates</TextBlock>
+                                <HyperlinkButton  Margin="12, 0, 0, 0" NavigateUri="https://twitter.com/firecubestudios" Content=" » Twitter"/>
+                                <TextBlock Opacity="0.7" FontSize="16">Icon designer</TextBlock>
+                                <HyperlinkButton NavigateUri="https://twitter.com/Mostafawalid102" Content="・Mostafa Walid"/>
+                                <TextBlock Opacity="0.7" FontSize="16">Special Thanks to</TextBlock>
+                                <HyperlinkButton NavigateUri="https://twitter.com/Zeealeid" Content="・Zeealeid"/>
+                                <MenuFlyoutSeparator Margin="0, 8, 0, 8"/>
+                                <TextBlock Opacity="0.7" FontSize="16">Settings</TextBlock>
+                                <Button Width="120" Click="OOBE_Click" Margin="0, 8, 0, 0">View OOBE</Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
                 </Button>
             </StackPanel>
             <StackPanel Grid.Row="1">
-                <TextBlock Visibility="{x:Bind helpers:UIHelper.ItemsToVisibility(RecentsList.Items), Mode=OneWay}" FontWeight="SemiBold" FontSize="20">Continue working on</TextBlock>
+                <TextBlock Opacity="0.7" Visibility="{x:Bind RecentsList.Visibility, Mode=OneWay}" FontSize="20">Continue working on</TextBlock>
                 <ListView x:Name="RecentsList" SelectionMode="Single" Visibility="{x:Bind helpers:UIHelper.ItemsToVisibility(RecentsList.Items), Mode=OneWay}" ItemContainerStyle="{ThemeResource RecentsContainer}" SelectionChanged="Recents_SelectionChanged" Margin="8, 12, 8, 12" ItemsSource="{x:Bind helpers:FileHelper.Recents, Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -81,7 +146,7 @@
                 </ListView>
             </StackPanel>
             <StackPanel Grid.Row="2">
-                <TextBlock FontWeight="SemiBold" FontSize="20">All projects</TextBlock>
+                <TextBlock Opacity="0.7" FontSize="20">All projects</TextBlock>
                 <ListView x:Name="FilesList" SelectionMode="Single" SelectionChanged="Files_SelectionChanged" Margin="8, 12, 8, 12" ItemContainerStyle="{ThemeResource DefaultContainer}" ItemsSource="{x:Bind helpers:FileHelper.Files, Mode=OneWay}" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.HorizontalScrollMode="Disabled">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="storage:StorageFile">
@@ -92,4 +157,5 @@
             </StackPanel>
         </Grid>
     </StackPanel>
+    </Grid>
 </Page>

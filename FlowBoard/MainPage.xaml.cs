@@ -27,6 +27,8 @@ using FlowBoard.Helpers;
 using FlowBoard.Classes;
 using static FlowBoard.Classes.FileClass;
 using Windows.UI.Popups;
+using Windows.ApplicationModel;
+using Windows.UI.Core.Preview;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -50,12 +52,56 @@ namespace FlowBoard
             UndoRedoService.Initialize(UndoButton, RedoButton, inkCanvas);
             SelectionToggle.IsChecked = true;
             Window.Current.Activated += Current_Activated;
+            // Application.Current.Suspending += new SuspendingEventHandler(App_Suspending); DISABLED FOR NOW
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += App_CloseRequested;
+        }
+
+        private async void App_CloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            var deferral = e.GetDeferral();
+            try
+            {
+                Toolbar.Visibility = Visibility.Collapsed;
+                Settings.IsPaneOpen = false;
+                string preview = await FileHelper.SavePreview(inkCanvas, Project.Name);
+                Toolbar.Visibility = Visibility.Visible;
+                Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
+                SaveRing.Visibility = Visibility.Visible;
+                await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview, true);
+            }
+            catch
+            {
+                await new MessageDialog("Project with this name exists or invalid name \n Change the name in settings").ShowAsync();
+                Toolbar.Visibility = Visibility.Visible;
+                SaveRing.Visibility = Visibility.Collapsed;
+                e.Handled = true;
+            }
+            deferral.Complete();
+        }
+
+        //Application is suspended, save the file automatically
+        public async void App_Suspending(Object sender, SuspendingEventArgs e)
+        {
+            try
+            {
+                Toolbar.Visibility = Visibility.Collapsed;
+                Settings.IsPaneOpen = false;
+                string preview = await FileHelper.SavePreview(inkCanvas, Project.Name);
+                Toolbar.Visibility = Visibility.Visible;
+                Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
+                SaveRing.Visibility = Visibility.Visible;
+                await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview, true);
+            }
+            catch
+            {
+                // File error or rename is invalid
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Project = e.Parameter as ProjectClass ?? null;
-            AppTitle.Text = Project.Name + " - FlowBoard FireCube's Edition";
+            AppTitle.Text = Project.Name + " - FlowBoard FireCube's Edition PRE-RELEASE";
             if (Project.File.CanvasColor == Colors.Black)
             {
                 AddPen(Colors.White);
@@ -159,7 +205,7 @@ namespace FlowBoard
                     Toolbar.Visibility = Visibility.Visible;
                     Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
                     SaveRing.Visibility = Visibility.Visible;
-                    await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview);
+                    await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview, false);
                 }
                 catch
                 {

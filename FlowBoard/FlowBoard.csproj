@@ -130,7 +130,7 @@
     <Compile Include="Classes\StrokeAction.cs" />
     <Compile Include="Classes\StrokeMovedAction.cs" />
     <Compile Include="Classes\StrokePortionErasedAction.cs" />
-    <Compile Include="Controls\AuroraLite.xaml.cs">
+    <Compile Include="Materials\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\BackgroundSelectorControl.xaml.cs">
@@ -176,8 +176,14 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Materials\BloomView.xaml.cs">
+      <DependentUpon>BloomView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewProjectPage.xaml.cs">
       <DependentUpon>NewProjectPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OOBEPage.xaml.cs">
+      <DependentUpon>OOBEPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CanvasSelectionService.cs" />
@@ -236,6 +242,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Materials\Bloom.html" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -249,7 +256,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\AuroraLite.xaml">
+    <Page Include="Materials\AuroraLite.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -297,7 +304,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Materials\BloomView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NewProjectPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OOBEPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

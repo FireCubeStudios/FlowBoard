@@ -8,7 +8,8 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls" 
     xmlns:Icons="using:Fluent.Icons" 
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
-    xmlns:controls="using:FlowBoard.Controls" xmlns:helpers="using:FlowBoard.Helpers" xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    xmlns:Materials="using:FlowBoard.Materials" 
+    xmlns:helpers="using:FlowBoard.Helpers" xmlns:controls="using:FlowBoard.Controls"
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
     mc:Ignorable="d">
 
@@ -28,7 +29,7 @@
                     Width="16" 
                     Height="16"/>
                 <TextBlock x:Name="AppTitle"
-                    Text="New project - FlowBoard FireCube's Edition"
+                    Text="New project - FlowBoard FireCube's Edition PRE-RELEASE"
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
@@ -52,6 +53,6 @@
                 </StackPanel>
             </Grid>
         </toolkit:DropShadowPanel>
-        <controls:AuroraLite/>
+        <Materials:AuroraLite/>
     </Grid>
 </Page>
