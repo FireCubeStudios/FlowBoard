@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -31,7 +33,15 @@ namespace FlowBoard
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            UnhandledException += OnUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnUnobservedException;
+            AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
         }
+        private static void OnUnobservedException(object sender, UnobservedTaskExceptionEventArgs e) => e.SetObserved();
+
+        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e) => e.Handled = true;
+
+        private void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e) { }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
