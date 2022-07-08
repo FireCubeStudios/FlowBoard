@@ -17,14 +17,23 @@
     xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
     xmlns:Service="using:FlowBoard.Services" 
     xmlns:ani="using:Microsoft.Toolkit.Uwp.UI.Animations" 
-    xmlns:helpers="using:FlowBoard.Helpers"
+    xmlns:helpers="using:FlowBoard.Helpers" 
+    xmlns:ToolkitHelpers="using:Microsoft.Toolkit.Uwp.Helpers"
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid>
-        <StackPanel Canvas.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" x:Name="SaveRing" Visibility="Collapsed" >
-            <controls:ProgressRing IsActive="True" Height="80" Width="80"/>
-            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" FontSize="24" Margin="24, 0, 0, 0">Saving...</TextBlock>
-        </StackPanel>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Settings.OpenPaneLength" Value="400"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Border x:Name="AppTitleBar"
                 IsHitTestVisible="True"
                 VerticalAlignment="Top"
@@ -40,34 +49,63 @@
                     Width="20" 
                     Height="20"/>
                 <TextBlock x:Name="AppTitle"
-                    Text="New Project - FlowBoard FireCube's Edition PRE-RELEASE"
+                    Text="{x:Bind helpers:UIHelper.GetTitleInfo(Name.Text), Mode=OneWay}"
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
         </Border>
+        <controls:TeachingTip x:Name="MegaTip" Target="{x:Bind Toolbar}" CloseButtonStyle="{ThemeResource CloseToolbarButton}" IsOpen="{x:Bind ToolkitHelpers:SystemInformation.Instance.IsFirstRun, Mode=OneWay}" PreferredPlacement="Top">
+            <controls:TeachingTip.Content>
+                <StackPanel Padding="12">
+                    <TextBlock FontWeight="SemiBold" FontSize="18">The Toolbar</TextBlock>
+                    <TextBlock Opacity="0.7" FontWeight="SemiBold" FontSize="16">Input tools</TextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="0, 4, 0, 2">
+                        <icons:FluentSymbolIcon Symbol="SelectObject24" Margin="0, 0, 2, 0"/>
+                        <TextBlock Opacity="0.7" Margin="0, 1, 0, 0" Text="・Toggles Selection Tool"/>
+                    </StackPanel>
+                    <TextBlock TextWrapping="WrapWholeWords">Note: During PRE-RELEASE selection can only be accessed with mouse right click or secondary pen button</TextBlock>
+                    <MenuFlyoutSeparator Margin="0, 8, 0, 8"/>
+                    <TextBlock Opacity="0.7" FontWeight="SemiBold" FontSize="16">Input tools</TextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="0, 4, 0, 2">
+                        <icons:FluentSymbolIcon Symbol="HandLeft24" Margin="0, 0, 2, 0"/>
+                        <TextBlock Opacity="0.7" Margin="0, 1, 0, 0" Text="・Toggle touch ink input"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0, 4, 0, 2">
+                        <icons:FluentSymbolIcon Symbol="Cursor24" Margin="0, 0, 2, 0"/>
+                        <TextBlock Opacity="0.7" Margin="0, 1, 0, 0" Text="・Toggle mouse ink input"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0, 4, 0, 2">
+                        <icons:FluentSymbolIcon Symbol="InkStroke24" Margin="0, 0, 2, 0"/>
+                        <TextBlock Opacity="0.7" Margin="0, 1, 0, 0" Text="・Toggle pen ink input"/>
+                    </StackPanel>
+                    <MenuFlyoutSeparator Margin="0, 8, 0, 8"/>
+                    <TextBlock Opacity="0.7" FontWeight="SemiBold" FontSize="16">Eraser tools</TextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="0, 4, 0, 2">
+                        <icons:FluentSymbolIcon Symbol="EraserSegment24" Margin="0, 0, 2, 0"/>
+                        <TextBlock Opacity="0.7" Margin="0, 1, 0, 0" Text="・Erase entire strokes"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0, 4, 0, 2">
+                        <icons:FluentSymbolIcon Symbol="EraserSmall24" Margin="0, 0, 2, 0"/>
+                        <TextBlock Opacity="0.7" Margin="0, 1, 0, 0" Text="・Erase a portion of a stroke*"/>
+                    </StackPanel>
+                </StackPanel>
+            </controls:TeachingTip.Content>
+        </controls:TeachingTip>
+        <StackPanel Canvas.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" x:Name="SaveRing" Visibility="Collapsed" >
+            <controls:ProgressRing IsActive="True" Height="80" Width="80"/>
+            <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" FontSize="24" Margin="24, 0, 0, 0">Saving...</TextBlock>
+        </StackPanel>
         <SplitView x:Name="Settings" PaneBackground="Transparent"
-           Margin="0, 32, 0, 0" IsPaneOpen="{x:Bind helpers:UIHelper.NullBool(SettingsButton.IsChecked), Mode=OneWay}" OpenPaneLength="400" PanePlacement="Right" DisplayMode="Inline">
+           Margin="0, 32, 0, 0" IsPaneOpen="{x:Bind helpers:UIHelper.NullBool(SettingsButton.IsChecked), Mode=OneWay}" OpenPaneLength="600" PanePlacement="Right" DisplayMode="Inline">
             <SplitView.Pane>
                 <StackPanel Padding="16">
                     <TextBlock FontWeight="SemiBold" FontSize="28">Settings</TextBlock>
-                    <StackPanel Orientation="Horizontal" Margin="0, 16, 0, 0">
-                        <toolkit:DropShadowPanel CornerRadius="2" Margin="2,2,4,2" Color="#e96e60" ShadowOpacity="0.93" VerticalAlignment="Center">
-                            <Grid Height="2" Width="18" CornerRadius="2">
-                                <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#e96e60" Offset="0.0" />
-                                        <GradientStop Color="Red" Offset="0.5" />
-                                        <GradientStop Color="#e96e60" Offset="1.0" />
-                                    </LinearGradientBrush>
-                                </Grid.Background>
-                            </Grid>
-                        </toolkit:DropShadowPanel>
-                        <TextBlock FontWeight="SemiBold">Project Name:</TextBlock>
-                    </StackPanel>
-                    <toolkit:DropShadowPanel ShadowOpacity="0.4" OffsetX="4" CornerRadius="8" Margin="0, 12, 0, 16" OffsetY="4">
-                        <TextBox x:Name="Name" Text="{x:Bind Project.Name, Mode=TwoWay}" Height="20" Width="340" PlaceholderText="Enter Project Name" Style="{ThemeResource GlowTextBox}"/>
+                    <TextBlock FontWeight="SemiBold" Margin="0, 16, 0, 0">Project Name:</TextBlock>
+                        <toolkit:DropShadowPanel ShadowOpacity="0.4" OffsetX="4" CornerRadius="8" Margin="0, 12, 0, 16" OffsetY="4">
+                        <TextBox x:Name="Name" Text="{x:Bind Project.Name, Mode=TwoWay}" TextChanged="Name_TextChanged" Height="20" Width="340" PlaceholderText="Enter Project Name" Style="{ThemeResource GlowTextBox}"/>
                     </toolkit:DropShadowPanel>
+                    <TextBlock x:Name="Status" Visibility="Collapsed" Foreground="Red" Width="250" TextWrapping="WrapWholeWords" Margin="0, 4, 0, 4"/>
                     <TextBlock FontWeight="SemiBold">Canvas Background:</TextBlock>
                     <UserControls:BackgroundSelectorControl x:Name="Backgrounds" SelectedIndex="{x:Bind helpers:UIHelper.ColorToIndex(Project.File.CanvasColor), Mode=OneWay}" Margin="8, 12, 0, 12"/>
                 </StackPanel>
@@ -112,9 +150,15 @@
                                 </StackPanel.Background>
                                 <StackPanel>
                                     <Button x:Name="UndoButton" IsEnabled="False" Height="32" Width="44" Margin="4">
+                                        <Button.KeyboardAccelerators>
+                                            <KeyboardAccelerator Modifiers="Control" Key="Z" />
+                                        </Button.KeyboardAccelerators>
                                         <icons:FluentSymbolIcon Symbol="ArrowUndo20"/>
                                     </Button>
                                     <Button x:Name="RedoButton" IsEnabled="False" Height="32" Width="44" Margin="4">
+                                        <Button.KeyboardAccelerators>
+                                            <KeyboardAccelerator Modifiers="Control" Key="Y" />
+                                        </Button.KeyboardAccelerators>
                                         <icons:FluentSymbolIcon Symbol="ArrowRedo20"/>
                                     </Button>
                                 </StackPanel>
@@ -134,7 +178,7 @@
                                 </ListView>
                                 <Button Style="{ThemeResource ToolbarButton}">
                                     <StackPanel>
-                                        <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="Add20"/>
+                                        <icons:FluentSymbolIcon Margin="0, 0, 1, 0" Symbol="Add20"/>
                                     </StackPanel>
                                     <Button.Flyout>
                                         <MenuFlyout>
@@ -159,7 +203,7 @@
                                 <AppBarSeparator/>
                                 <StackPanel Orientation="Horizontal">
                                     <ToggleButton x:Name="SelectionToggle" Style="{ThemeResource ExperimentalToolbarToggleButton}" Margin="4" Height="32" Checked="{x:Bind Service:CanvasSelectionService.EnableSelection}" Unchecked="{x:Bind Service:CanvasSelectionService.DisableSelection}">
-                                        <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, 0, 1, 0" Symbol="SelectObject24"/>
+                                        <icons:FluentSymbolIcon Foreground="{ThemeResource HvidSortBrush}" Margin="0, -2, 1, -2" Symbol="SelectObject24"/>
                                     </ToggleButton>
                                     <StackPanel>
                                         <UserControls:ClipboardTools inkCanvas="{x:Bind inkCanvas}"/>
@@ -171,7 +215,11 @@
                                     <Button Click="Home_Click">
                                         <icons:FluentSymbolIcon Symbol="Home20" Margin="0, 0, 1, 0"/>
                                     </Button>
-                                    <ToggleButton x:Name="SettingsButton" Style="{ThemeResource SettingsToolbarToggleButton}" Padding="0" Foreground="{ThemeResource HvidSortBrush}" Margin="4" Height="32" Width="44"/>
+                                    <ToggleButton x:Name="SettingsButton" Style="{ThemeResource SettingsToolbarToggleButton}" Padding="0" Foreground="{ThemeResource HvidSortBrush}" Margin="4" Height="32" Width="44">
+                                        <ToggleButton.KeyboardAccelerators>
+                                            <KeyboardAccelerator Modifiers="Control" Key="S" />
+                                        </ToggleButton.KeyboardAccelerators>
+                                    </ToggleButton>
                                 </StackPanel>
                             </StackPanel>
                         </ScrollViewer>

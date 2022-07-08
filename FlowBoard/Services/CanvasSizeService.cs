@@ -37,7 +37,7 @@ namespace FlowBoard.Services
         private static void ink_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             // Return if scaling is too big or small
-            if ((e.Delta.Scale > 1 && Scale >= 2.5) || (e.Delta.Scale < 1 && Scale <= 0.2) || UIHelper.IsContentHovered == true)
+            if ((e.Delta.Scale > 1 && Scale >= 3.5) || (e.Delta.Scale < 1 && Scale <= 0.2) || UIHelper.IsContentHovered == true)
                 return;
 
             Scale *= e.Delta.Scale;
@@ -103,7 +103,7 @@ namespace FlowBoard.Services
             var delta = e.GetCurrentPoint(sender as Canvas).Properties.MouseWheelDelta;
             float scale = (float)delta > 0 ? (float)1.04 : (float)0.96;
             // Return if scaling is too big or small
-            if ((scale > 1 && Scale >= 2.5) || (scale < 1 && Scale <= 0.2) || UIHelper.IsContentHovered == true)
+            if ((scale > 1 && Scale >= 3.5) || (scale < 1 && Scale <= 0.2) || UIHelper.IsContentHovered == true)
                 return;
 
             Scale *= scale;

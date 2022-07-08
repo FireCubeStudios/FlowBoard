@@ -118,7 +118,7 @@
                                             </Grid.Background>
                                         </Grid>
                                     </controls:DropShadowPanel>
-                                    <TextBlock FontWeight="SemiBold"> Red in UI are experimental WIP PRE-RELEASE features</TextBlock>
+                                    <TextBlock FontWeight="SemiBold">Red in UI are experimental WIP PRE-RELEASE features</TextBlock>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0, 8, 0, 8">
                                     <controls:DropShadowPanel CornerRadius="2" Margin="2,2,4,2" Color="{ThemeResource SystemAccentColorLight3}" ShadowOpacity="0.93" VerticalAlignment="Center">
@@ -163,7 +163,7 @@
                                     <LineBreak/>
                                     ・Desktop oriented UI design
                                     <LineBreak/>
-                                    ✓ Stenciles + Erasers
+                                    ✓ Stencils + Erasers
                                     <LineBreak/>
                                     ⛌ Smooth Navigation
                                     <LineBreak/>

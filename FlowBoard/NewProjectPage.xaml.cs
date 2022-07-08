@@ -40,12 +40,30 @@ namespace FlowBoard
             await Task.Run(() =>
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
+                    try
+                    {
+                        if (await FileHelper.IsFilePresent(Name.Text))
+                        {
+                            Ring.Visibility = Visibility.Collapsed;
+                            Content.Opacity = 1;
+                            Status.Text = "Project with the same name already exists";
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        //Invalid file name
+                        Ring.Visibility = Visibility.Collapsed;
+                        Content.Opacity = 1;
+                        Status.Text = "Invalid project name";
+                        return;
+                    }
                     bool success = await FileHelper.CreateProjectAsync(Name.Text, UIHelper.IndexToColor(Backgrounds.SelectedIndex).Color);
                     if(!success)
                     {
                         Ring.Visibility = Visibility.Collapsed;
                         Content.Opacity = 1;
-                        Status.Text = "Project with this name exists or invalid name";
+                        Status.Text = "Something went wrong";
                     }
                 })
             );

@@ -29,6 +29,7 @@ using static FlowBoard.Classes.FileClass;
 using Windows.UI.Popups;
 using Windows.ApplicationModel;
 using Windows.UI.Core.Preview;
+using Windows.Storage.AccessCache;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -40,7 +41,8 @@ namespace FlowBoard
     public sealed partial class MainPage : Page
     {
         ObservableCollection<InkDrawingAttributes> Pens = new ObservableCollection<InkDrawingAttributes>();
-        ProjectClass Project;
+        private ProjectClass Project;
+        private string OriginalName;
         public MainPage()
         {
             this.InitializeComponent();
@@ -59,22 +61,29 @@ namespace FlowBoard
         private async void App_CloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
             var deferral = e.GetDeferral();
+            if (Status.Visibility == Visibility.Visible)
+                Project.Name = OriginalName; // Use original name if there is an invalid name
             try
             {
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= App_CloseRequested;
                 Toolbar.Visibility = Visibility.Collapsed;
                 Settings.IsPaneOpen = false;
                 string preview = await FileHelper.SavePreview(inkCanvas, Project.Name);
                 Toolbar.Visibility = Visibility.Visible;
                 Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
                 SaveRing.Visibility = Visibility.Visible;
+                if(Project.Name != OriginalName) //Project has been renamed so remove old file from mru
+                {
+                    FileHelper.RemoveDuplicate(OriginalName);
+                }
                 await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview, true);
             }
-            catch
+            catch (Exception error)
             {
-                await new MessageDialog("Project with this name exists or invalid name \n Change the name in settings").ShowAsync();
+                await new MessageDialog("PRE-RELEASE: Something went wrong, please report: " + error.Message + " (The file will not be saved during PRE-RELEASE)").ShowAsync();
                 Toolbar.Visibility = Visibility.Visible;
                 SaveRing.Visibility = Visibility.Collapsed;
-                e.Handled = true;
+                Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
             }
             deferral.Complete();
         }
@@ -82,8 +91,11 @@ namespace FlowBoard
         //Application is suspended, save the file automatically
         public async void App_Suspending(Object sender, SuspendingEventArgs e)
         {
+            if (Status.Visibility == Visibility.Visible)
+                Project.Name = OriginalName; // Use original name if there is an invalid name
             try
             {
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= App_CloseRequested;
                 Toolbar.Visibility = Visibility.Collapsed;
                 Settings.IsPaneOpen = false;
                 string preview = await FileHelper.SavePreview(inkCanvas, Project.Name);
@@ -92,25 +104,33 @@ namespace FlowBoard
                 SaveRing.Visibility = Visibility.Visible;
                 await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview, true);
             }
-            catch
+            catch (Exception error)
             {
-                // File error or rename is invalid
+                await new MessageDialog("PRE-RELEASE: Something went wrong, please report: " + error.Message + " (The file will not be saved during PRE-RELEASE)").ShowAsync();
+                Toolbar.Visibility = Visibility.Visible;
+                SaveRing.Visibility = Visibility.Collapsed;
+                Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
             }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Project = e.Parameter as ProjectClass ?? null;
-            AppTitle.Text = Project.Name + " - FlowBoard FireCube's Edition PRE-RELEASE";
-            if (Project.File.CanvasColor == Colors.Black)
+            OriginalName = Project.Name;
+            if (Project.File.CanvasColor == Colors.Black || (Application.Current.RequestedTheme == ApplicationTheme.Dark && Project.File.CanvasColor == Colors.Transparent))
+            { // Black or Dark Mica
+                AddPen(Colors.White);
+                AddHighlighter(Colors.Yellow);
+            }
+            else if(Project.File.CanvasColor == Colors.Wheat) // Wheat
             {
                 AddPen(Colors.White);
-                AddHighlighter();
+                AddHighlighter(Colors.LightGreen);
             }
-            else
+            else // White canvas or Light Mica
             {
                 AddPen(Colors.Black);
-                AddHighlighter();
+                AddHighlighter(Colors.Yellow);
             }
             try
             {
@@ -176,13 +196,13 @@ namespace FlowBoard
             });
         }
 
-        private void AddHighlighter_Click(object sender, RoutedEventArgs e) => AddHighlighter();
+        private void AddHighlighter_Click(object sender, RoutedEventArgs e) => AddHighlighter(Colors.Yellow);
 
-        public void AddHighlighter()
+        public void AddHighlighter(Color color)
         {
             Pens.Add(new InkDrawingAttributes
             {
-                Color = Colors.Yellow,
+                Color = color,
                 DrawAsHighlighter = true,
                 FitToCurve = true,
                 IgnorePressure = false,
@@ -197,23 +217,61 @@ namespace FlowBoard
             await Task.Run(() =>
             CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                try
-                {
+                if (Status.Visibility == Visibility.Visible)
+                    Project.Name = OriginalName; // Use original name if there is an invalid name
+               try
+               {
+                    SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= App_CloseRequested;
                     Toolbar.Visibility = Visibility.Collapsed;
                     Settings.IsPaneOpen = false;
                     string preview = await FileHelper.SavePreview(inkCanvas, Project.Name);
                     Toolbar.Visibility = Visibility.Visible;
                     Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
                     SaveRing.Visibility = Visibility.Visible;
+                    if (Project.Name != OriginalName) //Project has been renamed so remove old file from mru
+                    {
+                        FileHelper.RemoveDuplicate(OriginalName);
+                    }
                     await FileHelper.SaveProjectAsync(((SolidColorBrush)ThemeGrid.Background).Color, inkCanvas, Project, preview, false);
-                }
-                catch
-                {
-                    await new MessageDialog("Project with this name exists or invalid name \n Change the name in settings").ShowAsync();
+               }
+               catch (Exception error)
+               {
+                    await new MessageDialog("PRE-RELEASE: Something went wrong, please report: " + error.Message + " (The file will not be saved during PRE-RELEASE)").ShowAsync();
                     Toolbar.Visibility = Visibility.Visible;
                     SaveRing.Visibility = Visibility.Collapsed;
-                }
+                    Settings.IsPaneOpen = (bool)SettingsButton.IsChecked;
+               }
             }));
+        }
+
+        private async void Name_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            await Task.Run(() =>
+               CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+               {
+                   try
+                   {
+                       if (await FileHelper.IsFilePresent(Name.Text))
+                       {
+                           Status.Visibility = Visibility.Visible;
+                           Status.Text = "Project with the same name already exists";
+                           return;
+                       }
+                       else
+                       {
+                           Status.Visibility = Visibility.Collapsed;
+                           return;
+                       }
+                   }
+                   catch
+                   {
+                       //Invalid file name
+                       Status.Visibility = Visibility.Visible;
+                       Status.Text = "Invalid project name";
+                       return;
+                   }
+               })
+           );
         }
     }
 }

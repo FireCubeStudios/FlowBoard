@@ -253,7 +253,7 @@
                     <Button.Flyout>
                         <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <toolkit:ColorPicker x:Name="picker" Color="{x:Bind DrawingAttributes.Color, Mode=TwoWay}" ColorChanged="ColorPicker_ColorChanged" HorizontalAlignment="Left"/>
+                                <toolkit:ColorPicker x:Name="picker" Color="{x:Bind DrawingAttributes.Color, Mode=TwoWay}" ColorChanged="picker_ColorChanged" HorizontalAlignment="Left"/>
                                 <StackPanel HorizontalAlignment="Right" Margin="8, 12, 12, 12">
                                     <Grid>
                                         <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">

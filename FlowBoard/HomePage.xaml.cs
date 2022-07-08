@@ -82,6 +82,13 @@ namespace FlowBoard
             rootFrame.Navigate(typeof(OOBEPage));
         }
 
+        private void ChangeLog_Click(object sender, RoutedEventArgs e)
+        {
+            OpenRing.Visibility = Visibility.Visible;
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(ChangeLog));
+        }
+
         private async void Discord_Click(object sender, RoutedEventArgs e) => await Windows.System.Launcher.LaunchUriAsync(new Uri("https://discord.gg/3WYcKat"));
     }
 }

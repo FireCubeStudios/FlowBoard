@@ -19,7 +19,7 @@ namespace FlowBoard.Helpers
         // Whether the InkCanvas can scale, pan. Disabled when InkStroke is selected
         public static bool IsContentHovered = false;
 
-        public static string GetTitleInfo(Single zoom, double width, double height) => $"SAVED  · {Math.Round(zoom * 10, 0)}%  · {Math.Round(width, 0)} x {Math.Round(height, 0)}";
+        public static string GetTitleInfo(string Name) => Name + " - FlowBoard FireCube's Edition PRE-RELEASE";
 
         public static FluentSymbol PenToIcon(InkDrawingAttributes ink)
         {
@@ -43,7 +43,7 @@ namespace FlowBoard.Helpers
 
         public static CornerRadius PaneToRadius(bool e) => e ? new CornerRadius(0, 8, 0, 0) : new CornerRadius(0);
 
-        public static Thickness IndexPaneToThickness(int index, bool pane) => index == 0 && pane ? new Thickness(0, 2, 2, 0) : new Thickness(0);
+        public static Thickness IndexPaneToThickness(int index, bool pane) => index == 0 && pane ? new Thickness(0, 1, 1, 0) : new Thickness(0, 1, 0, 0);
 
         public static SolidColorBrush IndexToColor(int index) => index switch
         {

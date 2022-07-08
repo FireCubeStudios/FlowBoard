@@ -1,0 +1,16 @@
+﻿<UserControl
+    x:Class="FlowBoard.Controls.ColorPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FlowBoard.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d">
+    <StackPanel>
+        <toolkit:ColorPicker x:Name="picker" x:FieldModifier="Public" Color="{x:Bind Color, Mode=TwoWay}" Margin="0, -80, 0, 0" IsColorSliderVisible="False" IsColorSpectrumVisible="False" RenderTransformOrigin="0.5, 0.5" IsColorChannelTextInputVisible="False" HorizontalAlignment="Left">
+            <toolkit:ColorPicker.RenderTransform>
+                <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+            </toolkit:ColorPicker.RenderTransform>
+        </toolkit:ColorPicker>
+    </StackPanel>
+</UserControl>

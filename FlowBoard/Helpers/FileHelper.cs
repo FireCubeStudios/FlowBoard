@@ -42,6 +42,17 @@ namespace FlowBoard.Helpers
             }
         }
 
+        public static void RemoveDuplicate(string Name)
+        {
+            foreach (AccessListEntry entry in StorageApplicationPermissions.MostRecentlyUsedList.Entries)
+            {
+                if (entry.Metadata.Replace(".png", "") == Name)
+                {
+                    StorageApplicationPermissions.MostRecentlyUsedList.Remove(entry.Token);
+                }
+            }
+        }
+
         public static ObservableCollection<StorageFile> Files = new();
         public static async void RefreshFiles()
         {
@@ -62,6 +73,7 @@ namespace FlowBoard.Helpers
                 ProjectClass project = new ProjectClass(Name);
                 project.File.CanvasColor = background;
                 project.RawFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(Name + ".flowx", CreationCollisionOption.GenerateUniqueName);
+                project.Name = project.RawFile.DisplayName;
                 Frame rootFrame = Window.Current.Content as Frame;
                 rootFrame.Navigate(typeof(MainPage), project);
                 return true;
@@ -128,6 +140,12 @@ namespace FlowBoard.Helpers
             {
                 return false;
             }
+        }
+
+        public static async Task<bool> IsFilePresent(string fileName)
+        {
+            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
+            return item != null;
         }
 
         // Save the project + add it to the most recently used list + get a preview image

@@ -10,12 +10,21 @@
     d:DesignWidth="400">
     <StackPanel Orientation="Horizontal">
         <Button Click="cutButton_Click" Style="{ThemeResource ToolbarButton}" Margin="4" Height="32" Width="44">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="X" />
+            </Button.KeyboardAccelerators>
             <icons:FluentSymbolIcon Symbol="Cut20"/>
         </Button>
         <Button Click="copyButton_Click" Style="{ThemeResource ToolbarButton}" Margin="4" Height="32" Width="44">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="C" />
+            </Button.KeyboardAccelerators>
             <icons:FluentSymbolIcon Symbol="Copy20"/>
         </Button>
         <Button Click="pasteButton_Click" Style="{ThemeResource ToolbarButton}" Margin="4" Height="32" Width="44">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="V" />
+            </Button.KeyboardAccelerators>
             <icons:FluentSymbolIcon Symbol="ClipboardPaste20"/>
         </Button>
     </StackPanel>

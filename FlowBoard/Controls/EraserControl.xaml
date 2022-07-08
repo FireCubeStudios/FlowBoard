@@ -8,12 +8,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:icons="using:Fluent.Icons" xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
-        <StackPanel Orientation="Horizontal">
             <ToggleButton x:Name="StrokeEraser" Unchecked="StrokeEraser_UnChecked" Checked="StrokeEraser_Checked">
-                <icons:FluentSymbolIcon Symbol="Eraser20"/>
+                <icons:FluentSymbolIcon Symbol="EraserSegment24" RenderTransformOrigin="0.5, 0.5" Margin="0, 0, 0, -2">
+                    <icons:FluentSymbolIcon.RenderTransform>
+                        <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>
+                    </icons:FluentSymbolIcon.RenderTransform>
+                </icons:FluentSymbolIcon>
             </ToggleButton>
             <ToggleButton x:Name="PointEraser" Style="{ThemeResource ExperimentalToolbarToggleButton}" Margin="4" Height="32" Foreground="{ThemeResource HvidSortBrush}" Checked="EraseByPoint_Button_Checked" Unchecked="EraseByPoint_Button_Unchecked">
-                <icons:FluentSymbolIcon Symbol="EraserSmall24" RenderTransformOrigin="0.5, 0.5">
+                <icons:FluentSymbolIcon Symbol="EraserSmall24" RenderTransformOrigin="0.5, 0.5" Margin="0, 0, 0, -2">
                     <icons:FluentSymbolIcon.RenderTransform>
                         <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>
                     </icons:FluentSymbolIcon.RenderTransform>
@@ -23,16 +26,15 @@
                 <icons:FluentSymbolIcon Symbol="ChevronUp12"/>
                 <Button.Flyout>
                     <Flyout FlyoutPresenterStyle="{ThemeResource MicaFlyoutStyle}">
-                        <StackPanel Margin="12">
+                    <StackPanel Margin="12" HorizontalAlignment="Center">
                             <TextBlock FontWeight="SemiBold" Text="Eraser Width:"/>
                             <StackPanel Orientation="Horizontal">
                                 <Slider x:Name="EraserWidthSlider" x:FieldModifier="Public" Style="{ThemeResource GlowSlider}" VerticalAlignment="Center" Minimum="4" Maximum="100" Value="{x:Bind helpers:EraserHelper.EraserWidth, Mode=TwoWay}" Width="200"/>
-                                <TextBlock FontSize="16" Margin="8, 0, 0, 0" VerticalAlignment="Center" Text="{x:Bind EraserWidthSlider.Value,Mode=OneWay}"/>
+                                <TextBlock FontSize="16" Margin="8, 0, 0, 0" Width="23" VerticalAlignment="Center" Text="{x:Bind EraserWidthSlider.Value,Mode=OneWay}"/>
                             </StackPanel>
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
             </Button>
         </StackPanel>
-    </StackPanel>
 </UserControl>

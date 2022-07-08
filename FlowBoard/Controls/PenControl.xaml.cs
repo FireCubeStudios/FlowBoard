@@ -69,6 +69,6 @@ namespace FlowBoard.Controls
 
         private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateCanvas();
 
-        private void ColorPicker_ColorChanged(ColorPicker sender, ColorChangedEventArgs args) => UpdateCanvas();
+        private void picker_ColorChanged(Windows.UI.Xaml.Controls.ColorPicker sender, ColorChangedEventArgs args) => UpdateCanvas();
     }
 }

@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="FlowBoard.NewProjectPage"
+    x:Class="FlowBoard.ChangeLog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FlowBoard"
@@ -29,7 +29,7 @@
                     Width="16" 
                     Height="16"/>
                 <TextBlock x:Name="AppTitle"
-                    Text="New project - FlowBoard FireCube's Edition PRE-RELEASE"
+                    Text="Changelog - FlowBoard FireCube's Edition PRE-RELEASE"
                     VerticalAlignment="Center"
                     Margin="12, 0, 0, 0"
                     Style="{StaticResource CaptionTextBlockStyle}" />
@@ -39,17 +39,34 @@
             <Grid BorderBrush="{ThemeResource MicaBorderBrush}" Background="{ThemeResource 1cBrush}" CornerRadius="8"  BorderThickness="1" HorizontalAlignment="center" VerticalAlignment="Center">
                 <muxc:ProgressRing x:Name="Ring" IsActive="True" Visibility="Collapsed" Height="40" Width="40" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.ZIndex="2"/>
                 <StackPanel x:Name="Content" HorizontalAlignment="center" VerticalAlignment="Center" Padding="16">
-                    <TextBlock FontSize="24" FontWeight="SemiBold" Margin="0, 0, 0, 12">New Project</TextBlock>
-                    <TextBlock FontWeight="SemiBold">Project Name:</TextBlock>
-                    <toolkit:DropShadowPanel ShadowOpacity="0.4" OffsetX="4" CornerRadius="8" Margin="0, 12, 0, 16" OffsetY="4">
-                        <TextBox x:Name="Name" Height="20" Width="340" PlaceholderText="New Project" Style="{ThemeResource GlowTextBox}"/>
-                    </toolkit:DropShadowPanel>
-                    <TextBlock FontWeight="SemiBold">Canvas Background:</TextBlock>
-                    <controls:BackgroundSelectorControl x:Name="Backgrounds" SelectedIndex="0" Margin="8, 12, 0, 12"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
-                        <TextBlock x:Name="Status" Foreground="Red" Width="250" TextWrapping="WrapWholeWords" Margin="0, 0, 4, 0"/>
-                        <Button IsEnabled="{x:Bind helpers:UIHelper.TextToBool(Name.Text), Mode=OneWay}" Width="80" Click="CreateProject_Click">Create</Button>
-                    </StackPanel>
+                    <TextBlock FontSize="24" FontWeight="SemiBold" Margin="0, 0, 0, -4">Changelog PRE-RELEASE:</TextBlock>
+                    <TextBlock TextWrapping="WrapWholeWords" Width="300">  <LineBreak/>
+                                    <Bold>Fixes and Features: </Bold>
+                                    <LineBreak/>
+                                    ✓ Added keyboard shortcuts
+                                     <LineBreak/>
+                                    ✓ Added onboarding process
+                                    <LineBreak/>
+                                    ✓ Fixed app not closing
+                                    <LineBreak/>
+                                    ✓ Fixed rename feature
+                                    <LineBreak/>
+                                    ✓ visual fixes
+                                    <LineBreak/>
+                                    <LineBreak/>
+                                    <Bold>Known issues: </Bold>
+                                    <LineBreak/>
+                                    ⛌ Jumplist missing
+                                    <LineBreak/>
+                                    ⛌ Selection tool primary click
+                                    <LineBreak/>
+                                    ⛌ Deleting pens
+                                    <LineBreak/>
+                                    ⛌ Selecting pen does not disable eraser
+                                    <LineBreak/>
+                                    ⛌ Windows 10 pens selected visual bug
+                    </TextBlock>
+                    <Button HorizontalAlignment="Right" Width="80" Click="Continue_Click" Margin="0, 12, 0, 0">Continue</Button>
                 </StackPanel>
             </Grid>
         </toolkit:DropShadowPanel>

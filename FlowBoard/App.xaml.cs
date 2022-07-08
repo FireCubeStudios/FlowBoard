@@ -77,9 +77,9 @@ namespace FlowBoard
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    if (SystemInformation.Instance.IsFirstRun)
+                    if (SystemInformation.Instance.IsAppUpdated || SystemInformation.Instance.IsFirstRun)
                     {
-                        rootFrame.Navigate(typeof(OOBEPage), e.Arguments);
+                        rootFrame.Navigate(typeof(ChangeLog), e.Arguments);
                     }
                     else
                     {
